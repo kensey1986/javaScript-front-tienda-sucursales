@@ -1,0 +1,184 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<app-cliente-facturar></app-cliente-facturar>
+<div class="card mb-3">
+  <div class="card-header bg-dark text-muted">
+    <h3>
+      <strong>
+        {{ titulo }}
+      </strong>
+    </h3>
+  </div>
+  <div class="card-body">
+    <div class="row mb-4">
+      <label for="fecha" class="col-form-label ">
+        <strong> Fecha Inicial </strong>
+      </label>
+      <div class="col-sm-3">
+        <input
+          type="date"
+          style="width: 200px"
+          class="form-control"
+          [(ngModel)]="fechaInicioFiltro"
+          name="filtro"
+          requiered
+        />
+      </div>
+      <label for="fecha" class="col-form-label">
+        <strong> Fecha Final </strong>
+      </label>
+      <div class="col-sm-3">
+        <input
+          type="date"
+          style="width: 200px"
+          class="form-control"
+          [(ngModel)]="fechaFinFiltro"
+          name="filtro"
+          requiered
+        />
+      </div>
+      <div class="col-sm-2">
+        <button class="btn btn-rounded btn-outline-primary"
+        type="button"
+        (click)="filtrarFacturas()"
+        >
+          Filtrar
+        </button>
+        
+      </div>
+      <div class="col-sm-3 mt-2">
+        <strong>
+          <label for="filtro">Filtrar Por Nombre</label>
+        </strong>
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            name="filterProducto"
+            placeholder="Digite nombre producto"
+            [(ngModel)]="filterProducto"
+          />
+        </div>
+      </div>
+      
+      <div class="col-sm-7 mt-2">
+        <strong>
+          <label for="filtro">Filtrar Por rango cantidades</label>
+        </strong>
+        <div class="" style="display: flex">
+          <div class="form-group ml-2" style="width: 80px">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Inicial"
+              name="cantIni"
+              [(ngModel)]="cantIni"
+            />
+          </div>
+          <div class="form-group ml-2" style="width: 80px">
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Final"
+              name="cantFinal"
+              [(ngModel)]="cantFinal"
+            />
+          </div>
+          <button
+            class="btn btn-rounded btn-outline-dark mb-2 ml-2"
+            type="button"
+            (click)="filtrarCantidades(cantIni, cantFinal)"
+          >
+            Filtrar
+          </button>
+          <button
+            class="btn btn-rounded btn-outline-dark mb-2 ml-2"
+            type="button"
+            (click)="cagarListadoProductos()"
+          >
+            Cargar lista Completa
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-2 mt-3">
+        <button
+          class="btn btn-rounded btn-outline-dark mt-4"
+          type="button"
+          (click)="imprimirInforme()"
+        >
+          Imprimir
+        </button>
+      </div>
+
+      <div class="alert alert-info" *ngIf="productos?.length == 0">
+        <span class="text-muted"
+          ><strong>No hay registros en la Base de Datos</strong></span
+        >
+      </div>
+      <table
+        id="tablaProductos"
+        #tablaProductos
+        class="table table-bordered table-striped"
+        *ngIf="productos?.length > 0"
+      >
+        <thead class="bg-dark text-center text-white">
+          <tr>
+            <th>Nº</th>
+            <th>Cod</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <!-- <th>Descripcion</th>  -->
+            <th>Fec. Ing Stock.</th>
+            <th>Fec. Ult Venta.</th>
+            <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Editar</th> -->
+            <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</th> -->
+          </tr>
+        </thead>
+        <tbody class="text-center">
+          <tr *ngFor="let producto of productos | filter: filterProducto">
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.codigo }}</td>
+            <td>{{ producto.nombre | uppercase }}</td>
+            <td>{{ formatNumber(producto.precio) }}</td>
+            <td class="badge badge-danger mt-2" *ngIf="producto.cantidad <= 0">
+              <strong> Agotado </strong>
+            </td>
+            <td *ngIf="producto.cantidad > 1">
+              {{ producto.cantidad }}
+            </td>
+            <!-- <td>{{ producto.descripcion }}</td> -->
+            <td>{{ producto.createAt | date: "EEEE dd, MMMM yyyy" }}</td>
+            <td>{{ producto.fechaVenta | date: "EEEE dd, MMMM yyyy" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <!-- <div *ngIf="facturas?.length > 0"
+  class="row my-3">
+     <div class="col-sm-6 ">
+      <mat-card>
+        <mat-card-title >
+          Total Ventas:
+        </mat-card-title>
+        <mat-card-content>
+          <h1>
+              {{formatNumber(totalFiltro)}}
+          </h1>
+        </mat-card-content>
+      </mat-card>
+     </div>
+     <div class="col-sm-6  " *ngIf="authService.hasRole('ROLE_ADMIN')">
+      <mat-card>
+        <mat-card-title>
+          Gancia Total:
+        </mat-card-title>
+        <mat-card-content>
+          <h1  >
+              {{formatNumber(gananciaFiltro)}}
+          </h1>
+        </mat-card-content>
+      </mat-card>
+     </div>
+</div> -->
+  </div>
+</div>

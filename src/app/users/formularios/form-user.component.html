@@ -1,0 +1,401 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<mat-card class="bg-light">
+    <mat-card-header>
+      <mat-card-title>
+        <strong>
+          {{titulo}}
+        </strong>
+      </mat-card-title>
+      <mat-icon matSuffix>perm_identity</mat-icon>
+    </mat-card-header>
+<mat-card-content class="bg-light">
+  <mat-card-subtitle>
+    <span class="my-1">
+      Los campos con (*) son requeridos.
+    </span>
+    <mat-card *ngIf="errores?.length>0">
+      <mat-card-content>
+        <ul class="alert alert-danger"  >
+          <li  *ngFor="let err of errores" >
+            {{err}}
+          </li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </mat-card-subtitle>
+  <form [formGroup]="formularioCreado" >
+    <div class="row">
+      <!-- Columna izquierda -->
+      <div class="col-sm-6">
+       
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label for="nick">
+                Nick
+              </mat-label>
+              <input style="text-transform: uppercase;"
+                  matInput required
+                  formControlName="nick"
+                  placeholder="Ej: juan pepito ">
+              <mat-icon matSuffix>create</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['nick'].invalid &&
+                                (formularioCreado.controls['nick'].dirty
+                                || formularioCreado.controls['nick'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['nick'].errors.required"
+                               role="alert">
+                               Nick es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['nick'].errors.minlength"
+                               role="alert" >
+                             *Minimo 3 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['nick'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 100 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill"  style="width: 100%;">
+              <mat-label>Ingresar Contraseña</mat-label>
+              <input  autocomplete="off"
+                  formControlName="password"
+                  matInput [type]="hide ? 'password' : 'text'">
+              <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['password'].invalid &&
+                                (formularioCreado.controls['password'].dirty
+                                || formularioCreado.controls['password'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['password'].errors.required"
+                               role="alert">
+                               Password es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['password'].errors.minlength"
+                               role="alert" >
+                             *Minimo 3 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['password'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 30 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;">
+              <mat-label for="nombre">
+                Nombre
+              </mat-label>
+              <input style="text-transform: uppercase;"
+                  matInput required
+                  formControlName="nombre"
+                  placeholder="Ej: juan pepito ">
+              <mat-icon matSuffix>create</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['nombre'].invalid &&
+                                (formularioCreado.controls['nombre'].dirty
+                                || formularioCreado.controls['nombre'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['nombre'].errors.required"
+                               role="alert">
+                          Nombre es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['nombre'].errors.minlength"
+                               role="alert" >
+                             *Minimo 3 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['nombre'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 20 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="documento">
+                Documento de identidad
+              </mat-label>
+              <input  matInput required
+                  formControlName="documento"
+                  placeholder="ej: 1234569870">
+             <mat-icon matSuffix>perm_identity</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['documento'].invalid &&
+                                (formularioCreado.controls['documento'].dirty
+                                || formularioCreado.controls['documento'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['documento'].errors.required"
+                               role="alert">
+                               Documento es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['documento'].errors.minlength"
+                               role="alert" >
+                             *Minimo 8 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['documento'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 10 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="celular1">
+                Celular Principal
+              </mat-label>
+              <input matInput required
+                  formControlName="celular1"
+                  placeholder="Ej: 321123456">
+              <mat-icon matSuffix> stay_primary_portrait</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['celular1'].invalid &&
+                                (formularioCreado.controls['celular1'].dirty
+                                || formularioCreado.controls['celular1'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['celular1'].errors.required"
+                               role="alert">
+                               Celular Principal es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['celular1'].errors.minlength"
+                               role="alert" >
+                             *Minimo 10 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['celular1'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 10 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="telefono">
+                Telefono Fijo
+              </mat-label>
+              <input
+                  matInput
+                  formControlName="telefono"
+                  placeholder="ej: 5777777">
+              <mat-icon matSuffix>phone</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['telefono'].invalid &&
+                                (formularioCreado.controls['telefono'].dirty
+                                || formularioCreado.controls['telefono'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['telefono'].errors.minlength"
+                               role="alert" >
+                             *Minimo 7 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['telefono'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 7 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+       
+      </div>
+      <!-- columna derecha -->
+      <div class="col-sm-6">
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="apellido">
+                Apellido
+              </mat-label>
+              <input style="text-transform: uppercase;"
+                  matInput required
+                  formControlName="apellido"
+                  placeholder="ej: doe smitch">
+              <mat-icon matSuffix>create</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['apellido'].invalid &&
+                                (formularioCreado.controls['apellido'].dirty
+                                || formularioCreado.controls['apellido'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['apellido'].errors.required"
+                               role="alert">
+                               Apellido es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['apellido'].errors.minlength"
+                               role="alert" >
+                             *Minimo 3 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['apellido'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 20 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="email">
+                Email
+              </mat-label>
+              <input style="text-transform: uppercase;"
+                  matInput required
+                  formControlName="email"
+                  placeholder="ej: sucorreo@gmail.com ">
+              <mat-icon matSuffix> email</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['email'].invalid &&
+                                (formularioCreado.controls['email'].dirty
+                                || formularioCreado.controls['email'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['email'].errors.required"
+                               role="alert">
+                               Email es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['email'].errors.email"
+                               role="alert" >
+                               Formato de 'Email' no valido
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="celular2">
+                Celular Secundario
+              </mat-label>
+              <input matInput
+                  formControlName="celular2"
+                  placeholder="Digete celular Secundario">
+              <mat-icon matSuffix> stay_primary_portrait</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['celular2'].invalid &&
+                                (formularioCreado.controls['celular2'].dirty
+                                || formularioCreado.controls['celular2'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['celular2'].errors.minlength"
+                               role="alert" >
+                             *Minimo 10 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['celular2'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 10 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="direccion">
+                Direccion
+              </mat-label>
+              <input style="text-transform: uppercase;"
+                  matInput required
+                  formControlName="direccion"
+                  placeholder="ej: calle-4 av-102 # 1-02">
+                  <mat-icon matSuffix>home</mat-icon>
+            </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['direccion'].invalid &&
+                                (formularioCreado.controls['direccion'].dirty
+                                || formularioCreado.controls['direccion'].touched )">
+                        <mat-error *ngIf="formularioCreado.controls['direccion'].errors.required"
+                               role="alert">
+                               Direccion es requerido
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['direccion'].errors.minlength"
+                               role="alert" >
+                             *Minimo 3 caracteres*
+                        </mat-error>
+                        <mat-error *ngIf="formularioCreado.controls['direccion'].errors.maxlength"
+                               role="alert" >
+                             *Maximo 50 caracteres*
+                        </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="direccion">
+                Barrio
+              </mat-label>
+            <mat-select required
+                      [compareWith]="compararRegion"
+                      formControlName="region"
+                      name="region"
+                      style="width: 330px;">
+                      <mat-option
+                        *ngFor="let region of regiones"
+                        [value]="region"
+                      >
+                        {{region.nombre | uppercase}}
+                      </mat-option >
+            </mat-select>
+            <mat-icon matSuffix> location_on</mat-icon>
+          </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['region'].invalid &&
+                              (formularioCreado.controls['region'].dirty
+                              || formularioCreado.controls['region'].touched )">
+                    <mat-error *ngIf="formularioCreado.controls['region'].errors.required"
+                        role="alert">
+                        Barrio es requerido
+                    </mat-error>
+            </mat-error>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;" >
+              <mat-label for="fecha">
+                Fecha Nacimiento
+              </mat-label>
+            <input matInput required
+                [matDatepicker]="fecha"
+                [min]="minDate"
+                [max]="maxDate"
+                formControlName="fecha"
+                placeholder="ej: 18/2/2050"
+               >
+               <mat-datepicker-toggle
+                matSuffix [for]="fecha">
+                </mat-datepicker-toggle>
+                <mat-datepicker  #fecha></mat-datepicker>
+              </mat-form-field>
+                  <mat-error *ngIf="formularioCreado.controls['fecha'].invalid &&
+                              (formularioCreado.controls['fecha'].dirty
+                              || formularioCreado.controls['fecha'].touched )">
+                    <mat-error *ngIf="formularioCreado.controls['fecha'].errors.required"
+                        role="alert">
+                        Fch. Nacimiento es requerida
+                    </mat-error>
+                  </mat-error>
+          </div>
+        </div>
+      </div>
+    </div>
+    <mat-card-footer class="bg-light ml-4">
+      <button class="btn btn-rounded btn-primary btn-xs my-3  "
+                role="button"
+                (click)="create()"
+                [disabled]="!formularioCreado.valid"
+                *ngIf="!user.id else elseBlock">
+          Crear
+        </button>
+        <ng-template #elseBlock>
+            <button class="btn btn-rounded btn-success btn-xs my-3 "
+                role="button"
+                [disabled]="!formularioCreado.valid"
+                (click)="update()">
+          Actualizar
+        </button>
+        </ng-template>
+    </mat-card-footer>
+  </form>
+  </mat-card-content>
+</mat-card>
+
+

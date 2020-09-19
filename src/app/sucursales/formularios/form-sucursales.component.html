@@ -1,0 +1,248 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<ul class="alert alert-danger" *ngIf="errores?.length>0" >
+  <li  *ngFor="let err of errores" >
+    {{err}}
+  </li>
+</ul>
+<div class="card bg-dark text-white">
+<div class="card-header">
+  <h4 class="card-title">
+    <strong>
+      {{titulo}}:
+    </strong>
+  </h4>
+</div>
+<div class="card-body">
+  <form #sucursalForm="ngForm" >
+     <div class="form-group row">
+      <label for="nombre" class="col-form-label col-sm-2 ">Sede Sistema </label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control "
+                [(ngModel)]="sucursal.nombre"
+                style="text-transform:uppercase;"
+                placeholder="Digite Nombre de Sucursalpara el sistema"
+                id="nombre"
+                name="nombre"
+                minlength="3"
+                maxlength="20"
+                #nombre="ngModel"
+                ng-model="nombre"
+                requiered>
+                <div *ngIf="nombre.invalid && (nombre.dirty || nombre.touched)"
+                        class="alert alert-danger">
+                  <div class="" *ngIf="nombre?.errors?.required" >
+                    Nombre es Requerido
+                  </div>
+                  <div class="" *ngIf="nombre?.errors?.minlength" >
+                    Nombre debe contener minimo 3 caracteres
+                  </div>
+                  <div class="" *ngIf="nombre?.errors?.maxlength" >
+                    Nombre debe contener maximo 20 caracteres
+                  </div>
+              </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="sede" class="col-form-label col-sm-2 ">Nombre Sucursal </label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control "
+                [(ngModel)]="sucursal.sede"
+                style="text-transform:uppercase;"
+                placeholder="Digite Nombre de Sucursal"
+                id="sede"
+                name="sede"
+                minlength="3"
+                maxlength="50"
+                #sede="ngModel"
+                ng-model="sede"
+                requiered>
+                <div *ngIf="sede.invalid && (sede.dirty || sede.touched)"
+                        class="alert alert-danger">
+                  <div class="" *ngIf="sede?.errors?.required" >
+                    Nombre es Requerido
+                  </div>
+                  <div class="" *ngIf="sede?.errors?.minlength" >
+                    Nombre debe contener minimo 3 caracteres
+                  </div>
+                  <div class="" *ngIf="sede?.errors?.maxlength" >
+                    Nombre debe contener maximo 50 caracteres
+                  </div>
+              </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label for="propietario" class="col-form-label col-sm-2 ">Nombre Propietario </label>
+      <div class="col-sm-6">
+        <input type="text" class="form-control "
+                [(ngModel)]="sucursal.propietario"
+                style="text-transform:uppercase;"
+                placeholder="Digite Nombre del Propietario"
+                id="propietario"
+                name="propietario"
+                minlength="3"
+                maxlength="50"
+                #propietario="ngModel"
+                ng-model="propietario"
+                requiered>
+                <div *ngIf="propietario.invalid && (propietario.dirty || propietario.touched)"
+                        class="alert alert-danger">
+                  <div class="" *ngIf="propietario?.errors?.required" >
+                    Nombre es Requerido
+                  </div>
+                  <div class="" *ngIf="propietario?.errors?.minlength" >
+                    Nombre debe contener minimo 3 caracteres
+                  </div>
+                  <div class="" *ngIf="propietario?.errors?.maxlength" >
+                    Nombre debe contener maximo 50 caracteres
+                  </div>
+              </div>
+      </div>
+    </div>
+    <div class="form-group row">
+        <label for="nit" class="col-form-label col-sm-2 ">Nit </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.nit"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Nit"
+                  id="nit"
+                  name="nit"
+                  #nit="ngModel"
+                  ng-model="nit"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="regimen" class="col-form-label col-sm-2 ">Regimen </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.regimen"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Nit"
+                  id="regimen"
+                  name="regimen"
+                  #regimen="ngModel"
+                  ng-model="regimen"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="geoposicion" class="col-form-label col-sm-2 ">Dpto/Pais Sede </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.geoposicion"
+                  style="text-transform:uppercase;"
+                  placeholder="Departamento - Pais"
+                  id="geoposicion"
+                  name="geoposicion"
+                  #geoposicion="ngModel"
+                  ng-model="geoposicion"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="direccion" class="col-form-label col-sm-2 ">Direccion </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.direccion"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Direccion"
+                  id="direccion"
+                  name="direccion"
+                  #direccion="ngModel"
+                  ng-model="direccion"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="telefono" class="col-form-label col-sm-2 ">Telefono Fijo </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.telefono"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Numero telefono fijo"
+                  id="telefono"
+                  name="telefono"
+                  #telefono="ngModel"
+                  ng-model="telefono"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="celular1" class="col-form-label col-sm-2 ">WhatsApp </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.celular1"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Numero telefono"
+                  id="celular1"
+                  name="celular1"
+                  #celular1="ngModel"
+                  ng-model="celular1"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="celular2" class="col-form-label col-sm-2 ">Celular </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.celular2"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Numero Whatsapp"
+                  id="celular2"
+                  name="celular2"
+                  #telefono="ngModel"
+                  ng-model="celular2"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="facebook" class="col-form-label col-sm-2 ">Facebook </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.facebook"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Numero Whatsapp"
+                  id="facebook"
+                  name="facebook"
+                  #telefono="ngModel"
+                  ng-model="facebook"
+                  >
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="instagram" class="col-form-label col-sm-2 ">Instagram </label>
+        <div class="col-sm-6">
+          <input type="text" class="form-control "
+                  [(ngModel)]="sucursal.instagram"
+                  style="text-transform:uppercase;"
+                  placeholder="Digite Numero Whatsapp"
+                  id="instagram"
+                  name="instagram"
+                  #telefono="ngModel"
+                  ng-model="instagram"
+                  >
+        </div>
+      </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+          <button class="btn btn-primary"
+                  role="button"
+                  (click)="create()"
+                  *ngIf="!sucursal.id else elseBlock"
+                  [disabled]="!sucursalForm.form.valid" >
+            Crear
+          </button>
+          <ng-template #elseBlock>
+              <button class="btn btn-primary"
+                  role="button"
+                  (click)="update()"
+                  [disabled]="!sucursalForm.form.valid">
+            Actualizar
+          </button>
+          </ng-template>
+        </div>
+      </div>
+  </form>
+</div>
+</div>

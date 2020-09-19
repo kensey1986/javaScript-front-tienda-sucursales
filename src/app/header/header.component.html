@@ -1,0 +1,63 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+  <a class="navbar-brand" href="#">
+    <img  src="{{urlEndPoint}}images/logo-pagina.jpg"
+          alt="sin-foto" class="img-thumbnail rounded"
+          style="width: 64px; cursor: pointer;">
+  </a>
+  <button class="navbar-toggler"
+          type="button" data-toggle="collapse"
+          data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul *ngIf="authService.hasRole('ROLE_USER')"
+      class="navbar-nav mr-auto">
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/clientes">Clientes</a>
+      </li>
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/productos">Productos</a>
+      </li>
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/reportes">Reportes</a>
+      </li>
+      
+      <!-- <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/servicios">Servicios</a>
+      </li> -->
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/users"
+        *ngIf="authService.hasRole('ROLE_ADMIN')">Usuarios</a>
+      </li>
+      
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/facturas">Facturas </a>
+      </li>
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/sucursales"
+        *ngIf="authService.hasRole('ROLE_ADMIN')">Sucursales</a>
+      </li>
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/regiones">Barrios</a>
+      </li>
+    </ul>
+    <ul class="navbar-nav navbar-right">
+      <!-- <li *ngIf="!authService.isAuthenticated()">
+        <a [routerLink]="['/login']" class="btn btn-outline-primary">Sign In</a></li> -->
+      <li *ngIf="authService.isAuthenticated()" class="dropdown mr-1 ">
+        <a class="btn btn-outline-primary dropdown-toggle ml-5 pl-5" href="#"
+            role="button" id="dropdownMenuLink" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+          {{authService.usuario.username}}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink mr-5">
+          <button (click)="logout()" class="dropdown-item btn-sm mr-5"
+          type="submit">Cerrar Sesion</button>
+       </div>
+      </li>
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,89 @@
+<div class="abrir-modal animacion fadeIn" *ngIf="modalUserService.modal">
+<div  style="display: block;"
+    class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg " role="document">
+    <div class="modal-content">
+      <div class="modal-header bg-dark text-white-50">
+          <h4 class="modal-title">
+            <strong>
+              {{titulo}}
+            </strong>
+          </h4>
+        <button (click)="cerrarModal()"
+          type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span class="text-white" aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm">
+              <ul *ngIf="user"  class="list-group text-dark mb-1">
+                  <li class="list-group-item active bg-dark text-muted">
+                    <strong>Nick: </strong> {{user.username}}</li>
+                <li class="list-group-item ">
+                    <strong>Nombre: </strong>{{user.nombre | uppercase}}</li>
+                <li class="list-group-item">
+                    <strong>Apellido: </strong>{{user.apellido | uppercase}}</li>
+                <li class="list-group-item">
+                   <strong>Ubicación: </strong>{{user.region.nombre | uppercase}}</li>
+                <li class="list-group-item">
+                  <strong>Email: </strong>{{user.email | uppercase}}</li>
+                <li class="list-group-item">
+                  <strong>Fec. Nacimiento: </strong>{{user.fecha | date:"fullDate"}}</li>
+                <li class="list-group-item">
+                  <strong>Fec. Creación: </strong>{{user.createAt | date:"fullDate"}}</li>
+
+              </ul>
+                <div class="input-group mb-1">
+                    <div class="custom-file">
+                      <input (change)="seleccionarFoto($event)"
+                            type="file" class="custom-file-input"
+                            id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                      <label class="custom-file-label" for="inputGroupFile04">{{rutaFoto}}</label>
+                    </div>
+                    <div class="input-group-append">
+                      <button (click)="subirFoto()"
+                        [disabled]="!fotoSelecionada"
+                        class="btn btn-outline-secondary"
+                        type="button" id="inputGroupFileAddon04">Subir</button>
+                    </div>
+                  </div>
+                  <div *ngIf="progreso>0 "  class="progress" style="height: 40px;">
+                      <div class="progress-bar progress-bar-striped"
+                          role="progressbar"
+                          [ngStyle]= "{width: progreso+'%'}"
+                          attr.aria-valuenow="{{progreso}}" aria-valuemin="0"
+                          aria-valuemax="100">
+                          {{progreso}}%
+                      </div>
+                  </div>
+
+            </div>
+            <div class="col-sm">
+              <img *ngIf="user?.foto"  src="{{urlEndPoint}}api/uploads/imguser/{{user.foto}}"
+                  alt="{{user.foto}}" class="img-thumbnail rounded">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer mt-0 bg-light">
+        <button *ngIf="authService.hasRole('ROLE_ADMIN')"
+                        type="button"
+                        class="btn btn-rounded btn-outline-secondary btn-xs"
+                        [routerLink]="['/users/form', user.id]"
+                  >
+                    Editar
+                  </button>
+        <button (click)="cerrarModal()"
+                  type="button" class="btn btn-rounded btn-outline-dark btn-xs"
+                        data-dismiss="modal">
+                  Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+

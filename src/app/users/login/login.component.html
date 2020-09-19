@@ -1,0 +1,56 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<div class="card border-primary text-center">
+  <div class="card-header">
+    <h2>
+      <strong>
+        Sistema - Inventarios - Facturacion - Informes
+      </strong>
+    </h2>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card-body">
+        <mat-card>
+          <mat-card-content>
+        <form method="post">
+          <div class="form-group col-sm-12">
+            <input [(ngModel)]="usuario.username" type="text" class="form-control"
+            autocomplete="off"
+            name="username" id="username" placeholder="Username" autofocus required>
+          </div>
+         
+          <div class="form-group col-sm-12">
+            <input [(ngModel)]="usuario.password" type="password" class="form-control"
+            name="password" id="password" placeholder="Password" 
+            autocomplete="off" required>
+          </div>
+          <div class="form-group col-sm-12">
+            <label for="form-control">Selecione sucursal</label>
+            <select   style="cursor: pointer;"
+                    [ngModelOptions]="{standalone: true}"
+                       name="myselect"
+                    class="form-control" [(ngModel)]="opcionSeleccionado" (change)="capturar()">
+                      <option style=" cursor: pointer;"
+                          *ngFor="let sucursal of sucursales"
+                      [ngValue]="sucursal">{{sucursal.nombre | uppercase}}</option>
+          </select>
+          </div>
+          <div class="form-group col-sm-12 mt-3">
+            <input (click)='login()' 
+              type="submit" class="btn btn-lg btn-primary btn-block" value="Login">
+          </div>
+         
+        </form>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+    <div class="col-sm-6 my-3">
+        <img    src="{{urlEndPoint}}images/logo.jpg"
+                alt="No se Pudo Establecer Conexion con la Base de Datos" class="img-thumbnail rounded"
+                style="width: 45%; cursor: pointer;">
+    </div>
+  </div>
+
+
+</div>

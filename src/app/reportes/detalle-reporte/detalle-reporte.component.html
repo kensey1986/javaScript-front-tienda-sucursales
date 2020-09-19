@@ -1,0 +1,56 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<div class="card" *ngIf="reporte">
+  <div class="card-header bg-dark text-muted">
+    <h4>
+      <strong> {{ titulo }} {{ reporte.id }} </strong>
+    </h4>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">
+      <a
+        [routerLink]="['/reportes']"
+        class="btn btn-rounded btn-outline-warning btn-xs mx-1"
+        >&laquo; Regresar</a
+      >
+      <button *ngIf="authService.hasRole('ROLE_ADMIN')"
+        [routerLink]="['/reportes/form/', reporte.producto.id]"
+        class="btn btn-rounded btn-outline-secondary btn-xs ml-2"
+        type="button">
+        Editar
+    </button>
+    <button
+    class="btn btn-rounded btn-outline-secondary btn-xs ml-2"
+    (click)="imprimirReporte()"
+    type="button">
+    Imprimir
+</button>
+    </h4>
+    <table id="tablaReportes" #tablaReportes 
+        class="table table-bordered table-striped">
+      <thead class="bg-dark text-center text-white">
+        <tr>
+          <th>Reporte Nº</th>
+          <th>Tipo</th>
+          <th>Producto</th>
+          <th>Descripcion</th>
+          <th>Cant</th>
+          <th>Creado</th>
+          <th>Modificado</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr>
+          <td>{{ reporte.id }}</td>
+          <td>{{ reporte.nombre }}</td>
+          <td>{{ reporte.producto.nombre }}</td>
+          <td>{{ reporte.descripcion }}</td>
+          <td>{{ reporte.cantidad }}</td>
+          <td>{{ reporte.createAt | date: "EEEE dd, MMMM yyyy" }}</td>
+          <td>{{ reporte.fechaModificado | date: "EEEE dd, MMMM yyyy" }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+</div>
+

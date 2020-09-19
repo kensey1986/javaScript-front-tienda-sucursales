@@ -1,0 +1,125 @@
+<div class="abrir-modal animacion fadeIn" *ngIf="modalProductoBuscarService.modal">
+  <app-detalle-producto
+      *ngIf="productoSelecionado"
+      [producto]="productoSelecionado"></app-detalle-producto>
+  <div  style="display: block;"
+      class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            <strong>
+              {{titulo}}:
+            </strong>
+          </h4>
+          <button
+            (click)="cerrarModalBusquedaProducto()"
+            type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <div class="row">
+              <div class="col-sm">
+                <form #productoForm="ngForm">
+                  <div class="form-group row example-form">
+                          <div class="col-sm-12">
+                            <mat-form-field class="example-full-width">
+                              <input type="text" placeholder="Digite Nombre Del Producto"
+                                      aria-label="Productos"
+                                      matInput [formControl]="autocompleteControl"
+                                      [matAutocomplete]="auto">
+                              <mat-autocomplete #auto="matAutocomplete"
+                                      [displayWith]="mostrarNombre"
+                                      (optionSelected)="seleccionarProducto($event)">
+                                <mat-option *ngFor="let producto of productosFiltrados | async"
+                                          [value]="producto">
+                                          <span *ngIf="producto.cantidad<=0">
+                                            <span class=" alert-danger mr-1 "
+                                                  style="font-size: 1rem;">
+                                                   * * NO HAY STOCK DISPONIBLE * *
+                                                   {{producto.nombre | uppercase}}
+                                                   * * {{formatNumber(producto.precio) }} * *
+                                            </span>
+                                          </span>
+                                          <span
+                                                style="font-size: 1rem;"
+                                                *ngIf="producto.cantidad>0">
+                                            {{producto.nombre | uppercase}}  * * {{formatNumber(producto.precio)}} * *
+                                          </span>
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                            <div class="alert alert-danger"
+                                  *ngIf="autocompleteControl.invalid && productoForm.submitted">
+                              Debe Agregar Producto
+                            </div>
+                          </div>
+                        </div>
+                    </form>
+
+                    <table class="table text-center table-striped table-hover table-sm" >
+                      <thead class="bg-dark  text-white">
+                        <tr>
+                          <th>Detalles</th>
+                          <th>Nombre</th>
+                          <th *ngIf="authService.hasRole('ROLE_ADMIN')">
+                              Precio Costo
+                          </th>
+                          <th>Precio Venta</th>
+                          <th>Cantidad</th>
+                         </tr>
+                      </thead>
+                      <tbody>
+                        <tr  *ngIf="producto" >
+                          <td>
+                            <img *ngIf="producto?.foto"  [routerLink]="['/productos/detalle', producto.id]"
+                            alt="{{producto.foto}}" class="img-thumbnail rounded"
+                            style="width: 64px; cursor: pointer;">
+                            <img *ngIf="!producto?.foto"  [routerLink]="['/productos/detalle', producto.id]"
+                                src="{{urlEndPoint}}images/no-producto.png"
+                            alt="sin-foto" class="img-thumbnail rounded"
+                            style="width: 64px; cursor: pointer;">
+                        </td>
+                          <td>{{producto.nombre | uppercase}}</td>
+                          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+                              {{formatNumber(producto.precioCompra)}}
+                          </td>
+                          <td>{{formatNumber(producto.precio)}}</td>
+                          <td class="badge badge-danger mt-2"
+                              *ngIf="producto.cantidad <= 3">
+                              <strong >
+                                  {{producto.cantidad}}
+                              </strong>
+                          </td>
+                          <td
+                              *ngIf="producto.cantidad > 3">
+                              {{producto.cantidad}}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+
+            <div class="col-sm-2">
+              <button (click)="cerrarModalBusquedaProducto()"
+                type="button" class="btn btn-secondary" data-dismiss="modal">
+                Cerrar
+              </button>
+            </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+
+
+
+
+

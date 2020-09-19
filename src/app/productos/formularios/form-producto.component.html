@@ -1,0 +1,126 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<ul class="alert alert-danger" *ngIf="errores?.length>0" >
+    <li  *ngFor="let err of errores" >
+      {{err}}
+    </li>
+</ul>
+<div class="card bg-dark text-white">
+    <div class="card-header">
+      <h4 class="card-title"  *ngIf="!producto.id">
+        <strong>
+          {{titulo1}}:
+        </strong>
+      </h4>
+      <h4 class="card-title"  *ngIf="producto.id">
+        <strong>
+          {{titulo2}}:
+        </strong>
+      </h4>
+    </div>
+    <div class="card-body">
+      <form #productoForm="ngForm">
+        <div class="form-group row">
+          <label for="nombre" class="col-form-label col-sm-2 text-right">Nombre :</label>
+          <div class="col-sm-6">
+            <input type="text" class="form-control"
+                    style="text-transform:uppercase;"
+                    [(ngModel)]="producto.nombre"
+                    placeholder="Digite un nombre para el Producto"
+                    name="nombre"
+                    minlength="3"
+                    maxlength="50"
+                    #nombre="ngModel"
+                    requiered>
+              
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="codigo" class="col-form-label col-sm-2 text-right">Codigo:</label>
+            <div class="col-sm-6">
+              <input type="number"
+                    class="form-control"
+                    [(ngModel)]="producto.codigo"
+                    name="codigo"
+                    placeholder="Solo Numeros, No digite 'puntos' ( . ) ni 'comas'( , )"
+                    minlength="2"
+                    maxlength="4"
+                    #precioCompra="ngModel"
+                    requiered>
+            </div>
+        </div>
+        <div class="form-group row">
+          <label for="descripcion" class="col-form-label col-sm-2 text-right">Descripcion :</label>
+          <div class="col-sm-6">
+            <textarea class="form-control"
+                      style="text-transform:uppercase;"
+                      placeholder="Digite cualquier dato que considere importante"
+                      [(ngModel)]="producto.descripcion"
+                      name="descripcion"
+                      >
+            </textarea>
+          </div>
+        </div>
+        <div class="form-group row">
+            <label for="precioCompra" class="col-form-label col-sm-2 text-right">Precio Compra :</label>
+            <div class="col-sm-6">
+              <input type="number"
+                    class="form-control"
+                    [(ngModel)]="producto.precioCompra"
+                    name="precioCompra"
+                    minlength="0"
+                    placeholder="Solo Numeros, No digite 'puntos' ( . ) ni 'comas'( , )"
+                    #precioCompra="ngModel"
+                    requiered>
+            </div>
+          </div>
+          <div class="form-group row">
+              <label for="precio" class="col-form-label col-sm-2 text-right">Precio Venta :</label>
+              <div class="col-sm-6">
+                <input type="number"
+                    class="form-control"
+                      [(ngModel)]="producto.precio"
+                      name="precio"
+                      minlength="0"
+                      placeholder="Solo Numeros, No digite 'puntos' ( . ) ni 'comas'( , )"
+                      #precio="ngModel"
+                      requiered>
+              </div>
+            </div>
+            <div class="form-group row">
+                <label for="cantidad" class="col-form-label col-sm-2 text-right">Cantidad :   </label>
+                <div class="col-sm-6">
+                  <input type="number"
+                      class="form-control"
+                        [(ngModel)]="producto.cantidad"
+                        name="cantidad"
+                        minlength="0"
+                        placeholder="Solo Numeros, No digite 'puntos' ( . ) ni 'comas'( , )"
+                        #cantidad="ngModel"
+                        >
+                </div>
+              </div>
+          <div class="form-group row">
+              <div class="col-sm-6">
+                <button class="btn btn-primary"
+                        role="button"
+                        (click)="create()"
+                        *ngIf="!producto.id else elseBlock"
+                        >
+                  Crear
+                </button>
+                <ng-template #elseBlock>
+                    <button class="btn btn-primary"
+                        role="button"
+                        (click)="update()"
+                        >
+                  Actualizar
+                </button>
+                </ng-template>
+
+              </div>
+            </div>
+      </form>
+    </div>
+
+  </div>
+

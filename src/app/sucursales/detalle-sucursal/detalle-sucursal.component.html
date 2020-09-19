@@ -1,0 +1,99 @@
+<div class="abrir-modal animacion fadeIn"  *ngIf="modalSucursalService.modal">
+    <div style="display: block;"
+        class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg " role="document">
+        <div class="modal-content">
+          <div class="modal-header bg-dark text-muted">
+            <h4 class="modal-title">
+              <strong>
+                {{titulo}}
+              </strong>
+            </h4>
+            <button (click)="cerrarModal()"
+              type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row">
+                <div class="col-sm-6">
+                  <ul *ngIf="sucursal"  class="list-group text-dark mb-3">
+                    <li class="list-group-item active bg-dark text-muted">
+                      {{sucursal.nombre}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Nombre Sucursal: </strong>
+                      {{sucursal.sede}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Propietario: </strong>
+                      {{sucursal.propietario}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Nit: </strong>
+                      {{sucursal.nit}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Regimen: </strong>
+                      {{sucursal.regimen}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Ubicacion: </strong>
+                      {{sucursal.geoposicion}}
+                    </li>
+                  </ul>
+                </div>
+                <div class="col-sm-6">
+                  <ul *ngIf="sucursal"  class="list-group text-dark mb-3">
+                    <li class="list-group-item">
+                      <strong>Direccion: </strong>
+                      {{sucursal.direccion}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Telefono: </strong>
+                      {{sucursal.telefono}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>WhatsApp: </strong>
+                      {{sucursal.celular1}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Celular: </strong>
+                      {{sucursal.celular2}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Facebook: </strong>
+                      {{sucursal.facebook}}
+                    </li>
+                    <li class="list-group-item">
+                      <strong>Instagram: </strong>
+                      {{sucursal.instagram}}
+                    </li>
+                  </ul>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+                          type="button"
+                          class="btn btn-rounded btn-outline-secondary btn-xs mx-2"
+                          [routerLink]="['/sucursales/form', sucursal.id]"
+                    >
+                      Editar
+          </button>
+            <button (click)="cerrarModal()"
+              type="button" class="btn btn-rounded btn-outline-dark btn-xs" data-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
+  

@@ -1,0 +1,74 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<app-detalle-user
+      *ngIf="userSelecionado"
+      [user]="userSelecionado"></app-detalle-user>
+<div class="card  mb-3">
+  <div class="card-header bg-dark text-muted"><h3><strong>{{titulo}}</strong></h3></div>
+  <div class="card-body">
+    <h4 class="card-title text-muted">Listado Usuarios</h4>
+    <!-- <div class="my-2 text-left">
+        <button *ngIf="authService.hasRole('ROLE_ADMIN')"
+                class="btn btn-rounded btn-outline-primary"
+                type="button"
+                [routerLink]="['/users/form']"
+        >
+          Crear Usuarios
+        </button>
+      </div> -->
+      <div class="alert alert-info"
+        *ngIf="users?.length == 0" >
+        <span class="text-muted"><strong>No hay registros en la Base de Datos</strong></span>
+    </div>
+    <table class='table table-bordered table-striped'
+                 *ngIf="users?.length>0" >
+      <thead class="bg-dark text-center text-white">
+        <tr>
+          <th>Detalles</th>
+          <th>Nick</th>
+          <th>Rol</th>
+          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Editar</th>
+          <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</th> -->
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr *ngFor="let user of users" >
+          <td>
+              <img *ngIf="user?.foto"  (click)="abrirModal(user)"
+                  src="{{urlEndPoint}}api/uploads/imguser/{{user.foto}}"
+                  alt="{{user.foto}}" class="img-thumbnail rounded"
+                  style="width: 64px; cursor: pointer;">
+              <img *ngIf="!user?.foto"  (click)="abrirModal(user)"
+                  src="{{urlEndPoint}}images/no-usuario.png"
+                  alt="no-usuario" class="img-thumbnail rounded"
+                  style="width: 64px; cursor: pointer;">
+          </td>
+
+          <td>{{user.username | uppercase}}</td>
+
+          <td>{{tipoUsuarios(user.roles.length)}}</td>
+          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+                <button type="button"
+                            class="btn btn-rounded btn-outline-secondary btn-xs"
+                            [routerLink]="['/users/form', user.id]"
+                            >
+                          Editar
+                </button>
+          </td>
+          <!-- <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+              <button type="button"
+                            class="btn btn-outline-danger"
+                            (click)="delete(user)"
+                            >
+                          Eliminar
+              </button>
+          </td> -->
+        </tr>
+      </tbody>
+    </table>
+    <app-paginador *ngIf="paginador"
+      [paginador]="paginador"
+      [link]="link">
+    </app-paginador>
+  </div>
+</div>
+

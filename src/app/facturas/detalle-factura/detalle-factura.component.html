@@ -1,0 +1,114 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<div class="card" *ngIf="factura">
+  <div class="card-header bg-dark text-muted">
+    <h4>
+      <strong> {{ titulo }} {{ factura.numeroFactura }} </strong>
+    </h4>
+  </div>
+  <div class="card-body">
+    <h4 class="card-title">
+      <a
+        [routerLink]="['/clientes/details', factura.cliente.id]"
+        class="btn btn-rounded btn-outline-warning btn-xs mx-1"
+        >&laquo; Regresar</a
+      >
+      <button
+        (click)="generarFactura(factura)"
+        class="btn btn-rounded btn-outline-secondary btn-xs"
+        type="button"
+      >
+        Imprimir
+      </button>
+    </h4>
+    <ul class="list-group my-2"  >
+      <li class="list-group-item list-group-item-primary bg-dark text-muted">
+        Datos del cliente
+      </li>
+      <li class="list-group-item">
+        <strong>Nombres: </strong> {{ factura.cliente.nombre | uppercase }}
+      </li>
+      <li class="list-group-item">
+        <strong>Apellidos: </strong> {{ factura.cliente.apellido | uppercase }}
+      </li>
+      <li class="list-group-item">
+        <strong>Documento:</strong> {{ factura.cliente.documento }}
+      </li>
+      <li class="list-group-item">
+        <strong>Celular:</strong> {{ factura.cliente.celular1 }}
+      </li>
+    </ul>
+
+    <ul class="list-group my-2">
+      <li class="list-group-item list-group-item-primary bg-dark text-muted">
+        Datos de la factura
+      </li>
+      <li class="list-group-item"><strong>Folio: </strong> {{ factura.id }}</li>
+      <li class="list-group-item">
+        <strong>Descripción: </strong> {{ factura.descripcion | uppercase }}
+      </li>
+      <li class="list-group-item">
+        <strong>Fecha Facturación: </strong>
+        {{ factura.createAt | date: "fullDate" }}
+      </li>
+      <li class="list-group-item">
+        <strong>Vendedor: </strong> {{ factura.usuario.nombre }}
+        {{ factura.usuario.apellido }}
+      </li>
+    </ul>
+
+    <table id="tablaFactura"
+      class="table table-striped table-hover table-bordered my-3 border-info"
+    >
+      <thead class="bg-dark text-center text-muted">
+        <tr>
+          <th style="max-width: 35px;">Codigo</th>
+          <th class="text-center">Producto</th>
+          <th>Precio</th>
+          <th  style="max-width: 40px;">Cantidad</th>
+          <th>Sub-Total</th>
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr *ngFor="let item of factura.items">
+          <td style="max-width: 35px;" class="text-left">{{ item.producto.codigo }}</td>
+          <td>{{ item.producto.nombre | uppercase }}</td>
+          <td>{{ formatNumber(item.producto.precio) }}</td>
+          <td style="max-width: 40px;">{{ item.cantidad }}</td>
+          <td>{{ formatNumber(item.importe) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <h5 *ngIf="factura.descuento" class="float-right">
+      <strong>Descuento</strong>:
+      <span class="badge badge-danger m-2 p-2">
+        {{ formatNumber(factura.descuento) }}
+      </span>
+    </h5>
+
+    <h5 class="float-right">
+      <strong>Total</strong>:
+      <span class="badge badge-warning m-2 p-2">
+        {{ formatNumber(factura.total) }}
+      </span>
+    </h5>
+    <h5 class="float-right" *ngIf="authService.hasRole('ROLE_ADMIN')">
+      <strong>Ganancia Total</strong>:
+      <span class="badge badge-success m-2 p-2">
+        {{ formatNumber(factura.totalGanancia) }}
+      </span>
+    </h5>
+
+    <div class="card border-info mb-4" style="max-width: 350px">
+      <div class="card card-header bg-dark text-muted">Observaciones</div>
+      <div class="card card-body">
+        <p *ngIf="!factura.observacion">No tiene observación</p>
+        <p *ngIf="factura.observacion">{{ factura.observacion | uppercase }}</p>
+      </div>
+    </div>
+    <a
+      [routerLink]="['/clientes/details', factura.cliente.id]"
+      class="btn btn-rounded btn-outline-warning btn-xs"
+      >&laquo; Regresar</a
+    >
+  </div>
+</div>

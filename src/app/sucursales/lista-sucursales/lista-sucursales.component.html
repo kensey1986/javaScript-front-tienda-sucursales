@@ -1,0 +1,66 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<app-detalle-sucursal
+*ngIf="sucursalSelecionado"
+[sucursal]="sucursalSelecionado">
+</app-detalle-sucursal>
+<div class="card  mb-3">
+  <div class="card-header bg-dark text-muted"><h3><strong>{{titulo}}</strong></h3></div>
+  <div class="card-body">
+    <h4 class="card-title text-muted">Listado de Sucursales</h4>
+    <div class="my-2 text-left">
+      <button *ngIf="authService.hasRole('ROLE_ADMIN')"
+              class="btn btn-rounded btn-outline-info btn-xs"
+              type="button"
+              [routerLink]="['/sucursales/form']"
+      >
+        Crear Sucursal
+      </button>
+    </div>
+    <div class="alert alert-info"
+        *ngIf="sucursales?.length == 0" >
+        <span class="text-muted"><strong>No hay registros en la Base de Datos</strong></span>
+    </div>
+    <table class='table table-bordered table-striped'
+                  *ngIf="sucursales?.length>0" >
+      <thead class="bg-dark text-center text-white">
+        <tr>
+          <th>Detalles</th>
+          <th>Nombre</th>
+          <th>Fec. Creacion</th>
+          <th >Editar</th>
+          <!-- <th >Eliminar</th> -->
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr *ngFor="let sucursal of sucursales" >
+          <td style="width: 64px; cursor: pointer;"
+                    (click)="abrirModal(sucursal)">Ver</td>
+              <td>{{sucursal.nombre}}</td>
+                  <td>{{sucursal.createAt | date:'EEEE dd, MMMM yyyy'}}</td>
+                  <td>
+                    <button type="button"
+                        class="btn btn-rounded btn-outline-secondary btn-xs"
+                        [routerLink]="['/sucursales/form', sucursal.id]"
+                        >
+                      Editar
+                    </button>
+                  </td>
+                  <!-- <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+                      <button type="button"
+                          class="btn btn-outline-danger"
+                          (click)="delete(region)"
+                          >
+                        Eliminar
+                      </button>
+                  </td> -->
+        </tr>
+      </tbody>
+    </table>
+    <app-paginador *ngIf="paginador"
+      [paginador]="paginador"
+      [link]="link"
+    >
+  </app-paginador>
+  </div>
+</div>
+

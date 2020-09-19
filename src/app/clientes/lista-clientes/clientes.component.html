@@ -1,0 +1,97 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<app-cliente-facturar></app-cliente-facturar>
+<div class="card  mb-3">
+  <div class="card-header bg-dark text-muted"><h3><strong>{{titulo}}</strong></h3></div>
+  <div class="card-body">
+    <h4 class="card-title text-muted">Listado de Clientes</h4>
+    <div class="row">
+      <div class="col-sm-2">
+        <div class="my-2 text-left">
+          <button class="btn btn-rounded btn-outline-primary btn-xs"
+          type="button"
+          (click)="abrirModal()"
+          >
+            Buscar Cliente
+          </button>
+        </div>
+      </div>
+      <div class="col-sm-10">
+        <div class="my-2 text-left">
+          <button
+                  class="btn btn-rounded btn-outline-info btn-xs"
+                  type="button"
+                   [routerLink]="['/clientes/form']"
+          >
+            Crear Cliente
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-info"
+        *ngIf="clientes?.length == 0" >
+        <span class="text-muted"><strong>No hay registros en la Base de Datos</strong></span>
+    </div>
+    <table class='table table-bordered table-striped'
+                  *ngIf="clientes?.length>0" >
+      <thead class="bg-dark text-center text-muted">
+        <tr>
+          <th>Detalles</th>
+          <th>Documento</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Celular</th>
+          <th>Facturar</th>
+          <th>Editar</th>
+          <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</th> -->
+        </tr>
+      </thead>
+      <tbody class="text-center">
+        <tr *ngFor="let cliente of clientes" >
+          <td>
+              <img *ngIf="cliente?.foto"  [routerLink]="['/clientes/details', cliente.id]"
+                  src="{{urlEndPoint}}api/uploads/imgcliente/{{cliente.foto}}"
+              alt="{{cliente.foto}}" class="img-thumbnail rounded"
+              style="width: 64px; cursor: pointer;">
+              <img *ngIf="!cliente?.foto"  [routerLink]="['/clientes/details', cliente.id]"
+                  src="{{urlEndPoint}}images/no-usuario.png"
+              alt="sin-foto" class="img-thumbnail rounded"
+              style="width: 64px; cursor: pointer;">
+          </td>
+            <td>{{cliente.documento}}</td>
+              <td>{{cliente.nombre | uppercase}}</td>
+                <td>{{cliente.apellido | uppercase}}</td>
+                <td>{{cliente.celular1 }}</td>
+                  <td>
+                    <button type="button"
+                            class="btn btn-rounded btn-outline-success btn-xs"
+                            [routerLink]="['/facturas/form', cliente.id]"
+                            >
+                    Crear Factura
+                  </button>
+                  </td>
+                  <td>
+                    <button type="button"
+                        class="btn btn-rounded btn-outline-secondary btn-xs"
+                        [routerLink]="['/clientes/form', cliente.id]"
+                        >
+                      Editar
+                    </button>
+                  </td>
+                  <!-- <td *ngIf="authService.hasRole('ROLE_ADMIN')">
+                      <button type="button"
+                          class="btn btn-outline-danger"
+                          (click)="delete(cliente)"
+                          >
+                        Eliminar
+                      </button>
+                  </td> -->
+                    <!-- <th>{{cliente.createAt}}</th> -->
+        </tr>
+      </tbody>
+    </table>
+    <app-paginador *ngIf="paginador"
+    [paginador]="paginador"
+    [link]="link">
+    </app-paginador>
+  </div>
+</div>
