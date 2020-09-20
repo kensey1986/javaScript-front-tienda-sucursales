@@ -104,6 +104,7 @@ const routes: Routes = [
   {path: 'sucursales/page/:page', component: ListaSucursalesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
   {path: 'sucursales/form', component: FormSucursalesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
   {path: 'sucursales/form/:id', component: FormSucursalesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
+  {path: 'sucursales/details/:id', component: DetalleSucursalComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
 
   {path: 'reportes', component: ListadoReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'reportes/form', component: FormReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},

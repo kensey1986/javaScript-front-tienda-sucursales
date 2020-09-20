@@ -21,7 +21,7 @@ import { LoadingService } from '../../generales/services/loading.service';
 export class DetalleClienteComponent implements OnInit {
 
   public  urlEndPoint: string;
-  @Input() cliente: Cliente;
+  @Input() cliente: Cliente; // pendiente por quitar ese input
   titulo = 'Detalle Cliente';
   public fotoSelecionada: File;
   progreso = 0;
@@ -120,7 +120,7 @@ export class DetalleClienteComponent implements OnInit {
       }
     });
   }
-  cerrarModal() {
+  cerrarModal() { // pendiente por revisar y eliminar
     this.modalClienteService.cerrarModal();
     this.fotoSelecionada = null;
     this.progreso = 0;

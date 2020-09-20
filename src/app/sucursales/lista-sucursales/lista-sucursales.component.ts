@@ -23,9 +23,8 @@ export class ListaSucursalesComponent implements OnInit {
   titulo: string;
 
   constructor(
-    public  sucursalService: SucursalService,
-    public modalSucursalService: ModalSucursalService,
-    public  activatedRoute: ActivatedRoute,
+    public sucursalService: SucursalService,
+    public activatedRoute: ActivatedRoute,
     public authService: AuthService,
     public loadingService: LoadingService,
     public funcionesService: FuncionesService,
@@ -84,10 +83,7 @@ export class ListaSucursalesComponent implements OnInit {
     });
   }
 
-abrirModal(sucursal: Sucursal) {
-    this.sucursalSelecionado = sucursal;
-    this.modalSucursalService.abrirModal();
-}
+
 
 }
 

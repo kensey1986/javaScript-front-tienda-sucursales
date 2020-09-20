@@ -1,3 +1,5 @@
+import { SucursalService } from './../../sucursales/services/sucursal.service';
+import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
 import { Component, OnInit } from '@angular/core';
 import { Factura } from '../interfaces/factura';
 import { ClienteService } from '../../clientes/services/cliente.service';
@@ -30,6 +32,7 @@ export class FacturasComponent implements OnInit {
   errores: string[];
   checked = false;
   facturas: Factura[];
+  sucursal: Sucursal;
   numeroFactura: number;
   estadoNumero = false;
   autocompleteControl = new FormControl();
@@ -38,6 +41,7 @@ export class FacturasComponent implements OnInit {
 
   constructor(
               public  clienteService: ClienteService,
+              public sucursalService: SucursalService,
               public  userService: UserService,
               public  facturaService: FacturaService,
               public  productoService: ProductoService,
@@ -50,11 +54,14 @@ export class FacturasComponent implements OnInit {
 
   ngOnInit() {
     this.loadingService.abrirModal();
+    this.sucursal =   JSON.parse(sessionStorage.getItem('sucursal')) as Sucursal;
     this.titulo = `${this.funcionesService.setTitulo()} - Nueva Factura -`;
     this.activatedRoute.paramMap.subscribe(params => {
       const clienteId = +params.get('clienteId');
       this.clienteService.getCliente(clienteId)
-      .subscribe(cliente => this.factura.cliente = cliente);
+      .subscribe(cliente => (this.factura.cliente = cliente));
+      this.sucursalService.getSucursal(this.sucursal.id)
+      .subscribe(sucursal => (this.factura.sucursal = sucursal, console.log(this.factura)));
       this.userService.getUser(JSON.parse(sessionStorage.getItem('usuario')).id)
       .subscribe(usuario => {this.factura.usuario = usuario,
         this.loadingService.cerrarModal();

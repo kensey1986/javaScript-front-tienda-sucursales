@@ -1,5 +1,6 @@
 import { ItemFactura } from './item-factura';
 import { Cliente } from '../../clientes/interfaces/cliente';
+import { Sucursal } from '../../sucursales/interfaces/sucursal';
 import { User } from '../../users/interfaces/user';
 export class Factura {
   id: number;
@@ -10,6 +11,7 @@ export class Factura {
   numeroFactura: number;
   items: Array<ItemFactura> = [];
   cliente: Cliente;
+  sucursal: Sucursal;
   usuario: User;
   descuento = 0;
   total: number;

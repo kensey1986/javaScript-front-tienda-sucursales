@@ -34,7 +34,7 @@
       <tbody class="text-center">
         <tr *ngFor="let sucursal of sucursales" >
           <td style="width: 64px; cursor: pointer;"
-                    (click)="abrirModal(sucursal)">Ver</td>
+          [routerLink]="['/sucursales/details', sucursal.id]">Ver</td>
               <td>{{sucursal.nombre}}</td>
                   <td>{{sucursal.createAt | date:'EEEE dd, MMMM yyyy'}}</td>
                   <td>

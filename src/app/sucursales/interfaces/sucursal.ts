@@ -1,3 +1,4 @@
+import { Factura } from '../../facturas/interfaces/factura';
 export class Sucursal {
     id: number;
     nombre: string;
@@ -13,4 +14,5 @@ export class Sucursal {
     telefono: string;
     celular1: string;
     celular2: string;
+    facturas: Array<Factura> = [];
   }
