@@ -41,7 +41,7 @@
         <li *ngIf="authService.hasRole('ROLE_ADMIN')"
             class="list-group-item">
             <strong>Precio Compra: </strong>
-            {{formatNumber(producto.precioCompra)}}
+            {{redondearPrecioCompra(producto.precioCompra)}}
         </li>
         <li class="list-group-item">
             <strong>Precio Venta: </strong>

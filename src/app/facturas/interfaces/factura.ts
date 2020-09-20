@@ -13,12 +13,12 @@ export class Factura {
   usuario: User;
   descuento = 0;
   total: number;
+  totalFactura: number;
   totalGanancia: number;
 
 
   aplicarDescuento(desc: number) {
     this.total -= desc;
-    console.log(this.total);
   }
 
   calcularGranTotal(): number {
@@ -31,6 +31,8 @@ export class Factura {
     }
     return this.total;
   }
+
+
   calcularGananciaTotal(): number {
     this.totalGanancia = 0;
     this.items.forEach((item: ItemFactura) => {

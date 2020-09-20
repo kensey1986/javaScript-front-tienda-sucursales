@@ -113,6 +113,7 @@ export class FormProductoComponent implements OnInit {
       );
     }
   }
+
   update(): void {
     this.loadingService.abrirModal();
     if ( this.prePrecioCompra !== this.producto.precioCompra
@@ -121,7 +122,7 @@ export class FormProductoComponent implements OnInit {
           const inversionAnterior = this.prePrecioCompra * this.preCantidad;
           const inversionActual = this.producto.precioCompra * diferenciaDeCantidad;
           const inversionTotal = inversionAnterior + inversionActual;
-          const nuevoCostoUnidad = ( inversionTotal / this.producto.cantidad );
+          const nuevoCostoUnidad = ( inversionTotal / (this.producto.cantidad ));
           this.producto.precioCompra = nuevoCostoUnidad;
     }
 

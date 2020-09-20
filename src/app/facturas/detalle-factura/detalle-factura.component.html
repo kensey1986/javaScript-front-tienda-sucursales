@@ -20,7 +20,7 @@
         Imprimir
       </button>
     </h4>
-    <ul class="list-group my-2"  >
+    <ul class="list-group my-2">
       <li class="list-group-item list-group-item-primary bg-dark text-muted">
         Datos del cliente
       </li>
@@ -56,24 +56,27 @@
       </li>
     </ul>
 
-    <table id="tablaFactura"
+    <table
+      id="tablaFactura"
       class="table table-striped table-hover table-bordered my-3 border-info"
     >
       <thead class="bg-dark text-center text-muted">
         <tr>
-          <th style="max-width: 35px;">Codigo</th>
+          <th style="max-width: 35px">Codigo</th>
           <th class="text-center">Producto</th>
           <th>Precio</th>
-          <th  style="max-width: 40px;">Cantidad</th>
+          <th style="max-width: 40px">Cantidad</th>
           <th>Sub-Total</th>
         </tr>
       </thead>
       <tbody class="text-center">
         <tr *ngFor="let item of factura.items">
-          <td style="max-width: 35px;" class="text-left">{{ item.producto.codigo }}</td>
+          <td style="max-width: 35px" class="text-left">
+            {{ item.producto.codigo }}
+          </td>
           <td>{{ item.producto.nombre | uppercase }}</td>
-          <td>{{ formatNumber(item.producto.precio) }}</td>
-          <td style="max-width: 40px;">{{ item.cantidad }}</td>
+          <td>{{ formatNumber(item.precioVendido) }}</td>
+          <td style="max-width: 40px">{{ item.cantidad }}</td>
           <td>{{ formatNumber(item.importe) }}</td>
         </tr>
       </tbody>
@@ -88,13 +91,13 @@
     <h5 class="float-right">
       <strong>Total</strong>:
       <span class="badge badge-warning m-2 p-2">
-        {{ formatNumber(factura.total) }}
+        {{ formatNumber(factura.totalFactura) }}
       </span>
     </h5>
     <h5 class="float-right" *ngIf="authService.hasRole('ROLE_ADMIN')">
       <strong>Ganancia Total</strong>:
       <span class="badge badge-success m-2 p-2">
-        {{ formatNumber(factura.totalGanancia) }}
+        {{ redondearGanancia(factura.totalGanancia) }}
       </span>
     </h5>
 
@@ -110,5 +113,12 @@
       class="btn btn-rounded btn-outline-warning btn-xs"
       >&laquo; Regresar</a
     >
+    <button
+      (click)="generarFactura(factura)"
+      class="btn btn-rounded btn-outline-secondary btn-xs ml-2"
+      type="button"
+    >
+      Imprimir
+    </button>
   </div>
 </div>

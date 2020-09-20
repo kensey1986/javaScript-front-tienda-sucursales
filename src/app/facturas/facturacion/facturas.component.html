@@ -247,7 +247,7 @@
           >
             <strong>Ganancia Total</strong>:
             <span class="badge badge-success mx-1">
-              {{ formatNumber(factura.calcularGananciaTotal()) }}
+              {{ redondearGanancia() }}
             </span>
           </h5>
           <div *ngIf="factura.items.length > 0" class="form-group row">

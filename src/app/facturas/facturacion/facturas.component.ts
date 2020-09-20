@@ -71,28 +71,13 @@ export class FacturasComponent implements OnInit {
   cargarUltimaFactura() {
     this.facturaService.getFacturaUltima()
           .subscribe(
-           facturas => {
-             this.facturas = facturas,
+           facturas => {this.facturas = facturas,
                          this.facturas.forEach(datos => {
                                                           this.numeroFactura = datos.numeroFactura + 1;
                                                           this.factura.numeroFactura = this.numeroFactura;
                 });
             },
           );
-    // this.llenarNumeroFactura();
-  }
-
-  llenarNumeroFactura() {
-    if (this.numeroFactura === 0) {
-      Swal.fire({
-              type: 'info',
-              title: 'Esta es la primera Factura',
-              text: 'Favor Ingresar Numero de Factura Inicial',
-              footer: 'En el Campo Numero Factura',
-              });
-          } else {
-            this.factura.numeroFactura = this.numeroFactura + 1 ;
-          }
   }
 
   public  _filter(value: string): Observable<Producto[]> {
@@ -182,6 +167,13 @@ export class FacturasComponent implements OnInit {
     if (facturaForm.form.valid && this.factura.items.length > 0) {
       this.loadingService.abrirModal();
       this.factura.totalGanancia = this.factura.calcularGananciaTotal();
+      this.factura.totalFactura = this.factura.calcularGranTotal();
+      this.factura.items.forEach((item: ItemFactura) => {
+        item.precioComprado = item.producto.precioCompra;
+        item.precioVendido = item.producto.precio;
+        item.importe = item.producto.precio * item.cantidad;
+      } );
+      this.cargarUltimaFactura();
       this.facturaService.create(this.factura).subscribe(factura => {
         this.factura.items.forEach((item: ItemFactura) => {
           item.producto.cantidad = item.producto.cantidad - item.cantidad;
@@ -223,6 +215,16 @@ export class FacturasComponent implements OnInit {
         return '0';
       }
     }
+  }
+
+  redondearGanancia(): string {
+    const ganancia = this.factura.calcularGananciaTotal();
+    const gananciaRedondeada = ganancia.toFixed(2);
+    return this.formatNumber(parseFloat(gananciaRedondeada));
+  }
+  redondearPrecioCompra(precioCompra: number): string  {
+    const precio = precioCompra.toFixed(2);
+    return this.formatNumber(parseFloat(precio));
   }
 
   formatNumber(cantidad: number): string {

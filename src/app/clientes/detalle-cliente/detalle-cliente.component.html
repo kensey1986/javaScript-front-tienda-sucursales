@@ -140,7 +140,7 @@
             <td>{{factura.id}}</td>
             <td>{{factura.descripcion | uppercase}}</td>
             <td>{{factura.createAt | date:"fullDate"}}</td>
-            <td class="text-right">{{formatNumber(factura.total)}}</td>
+            <td class="text-right">{{formatNumber(factura.totalFactura)}}</td>
             <td *ngIf="authService.hasRole('ROLE_ADMIN')"
                 class="text-right">{{formatNumber(factura.totalGanancia)}}</td>
             <td class="text-center"><button class="btn btn-primary btn-sm" type="button"

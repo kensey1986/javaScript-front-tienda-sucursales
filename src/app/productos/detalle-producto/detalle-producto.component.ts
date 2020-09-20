@@ -105,8 +105,14 @@ export class DetalleProductoComponent implements OnInit {
     this.producto = null;
   }
   calcularInversion(cantidad: number, precioCompra: number): string {
-    const inversion = cantidad * precioCompra;
-    return this.formatNumber(inversion);
+    const inversion =  (cantidad * precioCompra);
+    const inversionFormat = inversion.toFixed(2);
+    return this.formatNumber(parseFloat(inversionFormat));
+  }
+
+  redondearPrecioCompra(precioCompra: number): string  {
+    const precio = precioCompra.toFixed(2);
+    return this.formatNumber(parseFloat(precio));
   }
 
   formatNumber(cantidad: number): string {
