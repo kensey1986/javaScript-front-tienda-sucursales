@@ -5,6 +5,7 @@ import { HttpClient,  HttpRequest, HttpEvent } from '@angular/common/http';
 import { Observable,  throwError } from 'rxjs';
 import {  catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import Swal from 'sweetalert2';
 
 
 
@@ -52,7 +53,13 @@ constructor(public  http: HttpClient,
           return throwError(e);
         }
         if (e.error.mensaje) {
-          console.error(e.error.mensaje);
+          const prueba = e.error.dato;
+          const tmp = prueba.split(`'`);
+          Swal.fire({
+            type: 'error',
+            title: `${tmp[1]}`,
+            text: `Ya existe un registro Con este dato`,
+          });
         }
         return throwError(e);
       })

@@ -85,12 +85,6 @@ export class FormClienteComponent implements OnInit {
        },
        err => {
          this.errores = err.error.errors as string[];
-         Swal.fire({
-          type: 'error',
-          title: `El documento '${this.cliente.documento}' `,
-          text: `ya esta se encuentra registrado`,
-          footer: 'Intente de nuevo',
-          });
          this.loadingService.cerrarModal();
          console.error(err);
        }
@@ -136,14 +130,17 @@ export class FormClienteComponent implements OnInit {
   crearFormulario() {
     this.formularioCreado = this.formBuilder.group({
       nombre: ['', Validators.compose([
+        Validators.required,
         Validators.minLength(3),
         Validators.maxLength(20)
       ])],
       apellido: ['', Validators.compose([
+        Validators.required,
         Validators.minLength(3),
         Validators.maxLength(20)
       ])],
       documento: ['', Validators.compose([
+        Validators.required,
         Validators.minLength(8),
         Validators.maxLength(11)
       ])],
@@ -166,7 +163,9 @@ export class FormClienteComponent implements OnInit {
         Validators.minLength(3),
         Validators.maxLength(50)
       ])],
-      region: ['', ],
+      region: ['', Validators.compose([
+        Validators.required,
+      ])],
     });
   }
 

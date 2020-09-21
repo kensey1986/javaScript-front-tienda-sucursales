@@ -82,7 +82,7 @@ export class FacturaService {
   }
 
   getFiltrarFacturasPorFecha(term1: string, term2: string): Observable<Factura[]> {
-      return this.http.get<Factura[]>(`${this.urlEndPoint}/fecha1/${term1}/fecha2/${term2}`);
+    return this.http.get<Factura[]>(`${this.urlEndPoint}/fecha1/${term1}/fecha2/${term2}`);
   }
 
 }

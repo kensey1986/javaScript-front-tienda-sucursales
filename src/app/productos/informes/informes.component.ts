@@ -49,19 +49,25 @@ export class InformesComponent implements OnInit {
   ngOnInit() {
     this.titulo = this.funcionesService.setTitulo();
     this.cagarListadoProductos();
-    // this.estadoFormulario = new FormGroup({
-    //   estado: new FormControl(null)
-    // });
   }
 
   filtrarFacturas() {
     if (this.fechaInicioFiltro !== undefined && this.fechaInicioFiltro != null) {
       if (this.fechaFinFiltro !== undefined && this.fechaFinFiltro != null) {
-            this.loadingService.abrirModal();
-            this.productoService.getFiltrarProductosPorFecha(this.fechaInicioFiltro, this.fechaFinFiltro)
-          .subscribe(
-            producto => {this.productos = producto; });
-            this.loadingService.cerrarModal();
+        if (this.fechaFinFiltro > this.fechaInicioFiltro) {
+          this.loadingService.abrirModal();
+          this.productoService.getFiltrarProductosPorFecha(this.fechaInicioFiltro, this.fechaFinFiltro)
+        .subscribe(
+          producto => {this.productos = producto; });
+          this.loadingService.cerrarModal();
+        } else {
+          Swal.fire({
+            type: 'error',
+            title: `Error al seleccionar la 'Fecha Final'`,
+            text: 'Fecha Final Debe ser Mayor o igual a la Fecha Incial',
+            footer: '',
+            });
+        }
       } else {
         Swal.fire({
           type: 'error',
@@ -99,7 +105,23 @@ cagarListadoProductos() {
 filtrarCantidades( inicial: number, final: number) {
     this.productos = this.tmp;
     if (inicial >= 0 && final >= 0) {
+      if (inicial <= final ) {
       this.productos = this.productos.filter(dato => dato.cantidad >= inicial && dato.cantidad <= final);
+      } else {
+        Swal.fire({
+          type: 'error',
+          title: `Cantidad Inicial debe ser `,
+          text: 'Menor o igual la cantidad final',
+          footer: '',
+          });
+      }
+    } else {
+      Swal.fire({
+        type: 'error',
+        title: `No Ingresar`,
+        text: 'Valores Negativos (-)',
+        footer: '',
+        });
     }
   }
 

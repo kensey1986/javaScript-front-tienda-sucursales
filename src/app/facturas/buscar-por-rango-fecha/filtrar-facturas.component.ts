@@ -41,17 +41,26 @@ export class FiltrarFacturasComponent {
     this.totalFiltro = 0;
     if (this.fechaInicioFiltro !== undefined && this.fechaInicioFiltro != null) {
       if (this.fechaFinFiltro !== undefined && this.fechaFinFiltro != null) {
-            this.loadingService.abrirModal();
-            this.facturaService.getFiltrarFacturasPorFecha(this.fechaInicioFiltro, this.fechaFinFiltro)
+        if (this.fechaFinFiltro > this.fechaInicioFiltro) {
+          this.loadingService.abrirModal();
+          this.facturaService.getFiltrarFacturasPorFecha(this.fechaInicioFiltro, this.fechaFinFiltro)
           .subscribe(
             facturas => {this.facturas = facturas;
                          this.facturas.forEach(datos => {
                           this.gananciaFiltro += datos.totalGanancia;
-                          this.totalFiltro += datos.total;
+                          this.totalFiltro += datos.totalFactura;
                           });
                          this.loadingService.cerrarModal();
             },
           );
+        } else {
+          Swal.fire({
+            type: 'error',
+            title: `Error al seleccionar la 'Fecha Final'`,
+            text: 'Fecha Final Debe ser Mayor o igual a la Fecha Incial',
+            footer: '',
+            });
+        }
       } else {
         Swal.fire({
           type: 'error',
