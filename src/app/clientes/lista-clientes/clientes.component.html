@@ -34,13 +34,8 @@
         Buscar Cliente
       </button>
     </mat-card-actions>
-    <div class="alert alert-info" *ngIf="clientes?.length == 0">
-      <mat-label>
-        <strong>No hay registros en la Base de Datos</strong>
-      </mat-label>
-    </div>
     <mat-form-field
-      *ngIf="dataSource "
+      *ngIf="!activar "
       style="font-size: 14px; width: 100%"
       class="bg-light mb-2 p-2"
     >
@@ -131,7 +126,7 @@
           </button>
         </td>
       </ng-container>
-
+      
       <!-- Name Column -->
       <ng-container matColumnDef="facturar">
         <th style="text-align: center" mat-header-cell *matHeaderCellDef>
@@ -159,6 +154,14 @@
         </td>
       </tr>
     </table>
-    <mat-paginator [pageSizeOptions]="[5, 10, 20, 30]" showFirstLastButtons></mat-paginator>
+    <mat-paginator *ngIf="!activar"
+    [pageSizeOptions]="[5, 10, 20, 30]"
+    showFirstLastButtons
+  ></mat-paginator>
+  <div class="alert alert-info" *ngIf="activar">
+    <mat-label>
+      <strong>No hay registros en la Base de Datos</strong>
+    </mat-label>
+  </div>
   </mat-card-content>
 </mat-card>

@@ -1,130 +1,200 @@
 <app-loading *ngIf="loadingService.modal"></app-loading>
 <app-producto-buscar></app-producto-buscar>
-<div class="card mb-3">
-  <div class="card-header bg-dark text-muted">
-    <h3>
-      <strong>{{ titulo }}</strong>
-    </h3>
-  </div>
-  <div class="card-body">
-    <h4 class="card-title text-muted">Listado de Productos</h4>
-    <div class="row">
-      <div class="col-sm-4">
-        <div class="my-2 text-left">
-          <button
-            class="btn btn-rounded btn-outline-primary btn-xs"
-            type="button"
-            (click)="abrirModalProductoBuscar()"
-          >
-            Buscar Producto
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="my-2 text-left">
-          <button
-            *ngIf="authService.hasRole('ROLE_ADMIN')"
-            class="btn btn-rounded btn-outline-info btn-xs"
-            type="button"
-            [routerLink]="['/productos/form']"
-          >
-            Crear Productos
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-4">
-        <div class="my-2 text-left">
-          <button
-            *ngIf="authService.hasRole('ROLE_ADMIN')"
-            class="btn btn-rounded btn-outline-info btn-xs"
-            type="button"
-            [routerLink]="['/productos/informes']"
-          >
-           Informes
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="alert alert-info" *ngIf="productos?.length == 0">
-      <span class="text-muted"
-        ><strong>No hay registros en la Base de Datos</strong></span
+<mat-card class="bg-dark">
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>
+        <h3>
+          <strong class="text-white">{{ titulo }}</strong>
+        </h3>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <h4>
+          <strong class="text-white-50"> Listado de Productos</strong>
+        </h4>
+      </mat-card-subtitle>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-actions class="text-white ml-2 my-3">
+      <button
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs"
+        type="button"
+        [routerLink]="['/productos/form']"
       >
-    </div>
-    <table
-      class="table table-bordered table-striped"
-      *ngIf="productos?.length > 0"
+        Crear Producto
+      </button>
+      <button
+        [disabled]="[activar]"
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
+        type="button"
+        (click)="abrirModalProductoBuscar()"
+      >
+        Buscar Producto
+      </button>
+      <button
+        [disabled]="[activar]"
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
+        *ngIf="authService.hasRole('ROLE_ADMIN')"
+        type="button"
+        [routerLink]="['/productos/informes']"
+      >
+        Informes
+      </button>
+    </mat-card-actions>
+   
+    <mat-form-field
+    *ngIf="!activar"
+      style="font-size: 14px; width: 100%"
+      class="bg-light mb-2 p-2"
     >
-      <thead class="bg-dark text-center text-white">
-        <tr>
-          <th>Detalles</th>
-          <th>Codigo</th>
-          <th>Nombre</th>
-          <th>Precio</th>
-          <th>Stock</th>
-          <th>Descripcion</th> 
-          <th>Fec. Ing Stock.</th>
-          <th>Fec. Ult Venta.</th>
-          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Editar</th>
-          <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</th> -->
-        </tr>
-      </thead>
-      <tbody class="text-center">
-        <tr *ngFor="let producto of productos">
-          <td>
-            <img
-              *ngIf="producto?.foto"
-              [routerLink]="['/productos/detalle', producto.id]"
-              src="{{urlEndPoint}}api/uploads/imgproducto/{{
-                producto.foto
-              }}"
-              alt="{{ producto.foto }}"
-              class="img-thumbnail rounded"
-              style="width: 64px; cursor: pointer;"
-            />
-            <img
-              *ngIf="!producto?.foto"
-              [routerLink]="['/productos/detalle', producto.id]"
-              src="{{urlEndPoint}}images/no-producto.png"
-              alt="no-producto"
-              class="img-thumbnail rounded"
-              style="width: 64px; cursor: pointer;"
-            />
-          </td>
-          <td>{{ producto.codigo }}</td>
-          <td>{{ producto.nombre | uppercase }}</td>
-          <td>{{ formatNumber(producto.precio) }}</td>
-          <td class="badge badge-danger mt-2" *ngIf="producto.cantidad <= 3">
-            <strong>
-              {{ producto.cantidad }}
+      <mat-label class="ml-2">Filtro</mat-label>
+      <input
+        autocomplete="off"
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ej. ium"
+        #input
+      />
+    </mat-form-field>
+
+    <table
+      matSort
+      style="width: 100%"
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z8"
+    >
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef> <strong> Detalle </strong></th>
+        <td mat-cell *matCellDef="let element">
+          <img
+            *ngIf="element?.foto"
+            [routerLink]="['/productos/details', element.id]"
+            src="{{ urlEndPoint }}api/uploads/imgproducto/{{ element.foto }}"
+            alt="{{ element.foto }}"
+            class="img-thumbnail rounded"
+            style="width: 40px; cursor: pointer"
+          />
+          <img
+            *ngIf="!element?.foto"
+            [routerLink]="['/productos/details', element.id]"
+            src="{{ urlEndPoint }}images/no-producto.png"
+            alt="sin-foto"
+            class="img-thumbnail rounded"
+            style="width: 40px; cursor: pointer"
+          />
+        </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="codigo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <strong> Codigo </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.codigo }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="nombre">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Nombre </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.nombre | uppercase }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="precio">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Precio </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ formatNumber(element.precio) }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="cantidad">
+        <th mat-sort-header
+          style="text-align: left" mat-header-cell *matHeaderCellDef>
+          <strong> Stock </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          <span  style="font-size: 15px;"
+            *ngIf="element.cantidad <= 3">
+            <strong class="badge badge-danger">
+              {{ element.cantidad }}
             </strong>
-          </td>
-          <td *ngIf="producto.cantidad > 3">
-            {{ producto.cantidad }}
-          </td>
-          <td>{{ producto.descripcion }}</td>
-          <td>{{ producto.createAt | date: "EEEE dd, MMMM yyyy" }}</td> 
-          <td>{{ producto.fechaVenta | date: "EEEE dd, MMMM yyyy" }}</td> 
-          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
-            <button
-              type="button"
-              class="btn btn-outline-secondary btn-xs"
-              [routerLink]="['/productos/form', producto.id]"
-            >
-              Editar
-            </button>
-          </td>
-          <!-- <td *ngIf="authService.hasRole('ROLE_ADMIN')">
-                          <button type="button"
-                              class="btn btn-outline-danger"
-                              (click)="delete(producto)"
-                              >
-                            Eliminar
-                          </button>
-                      </td> -->
-        </tr>
-      </tbody>
+          </span>
+          <span *ngIf="element.cantidad > 3">
+               {{ element.cantidad }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="compra">
+        <th 
+          mat-sort-header
+          style="text-align: right;"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong > Fecha Ingreso del Stock </strong> 
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.createAt | date: "EEEE dd, MMMM yyyy" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="venta">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Fecha ultimo Movimiento del Stock </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.fechaVenta | date: "EEEE dd, MMMM yyyy" }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No se encontraron datos con: "{{ input.value }}"
+        </td>
+      </tr>
     </table>
-    <app-paginador *ngIf="paginador" [paginador]="paginador" [link]="link">
-    </app-paginador>
-  </div>
-</div>
+    <mat-paginator *ngIf="!activar"
+      [pageSizeOptions]="[5, 10, 20, 30]"
+      showFirstLastButtons
+    ></mat-paginator>
+    <div class="alert alert-info" *ngIf="activar">
+      <mat-label>
+        <strong>No hay registros en la Base de Datos</strong>
+      </mat-label>
+    </div>
+  </mat-card-content>
+</mat-card>

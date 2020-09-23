@@ -1,5 +1,5 @@
 import { FuncionesService } from './../../generales/services/funciones.service';
-import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
+import {  Component, ViewChild, OnInit } from '@angular/core';
 import { Cliente } from '../interfaces/cliente';
 import { ClienteService } from '../services/cliente.service';
 import { tap } from 'rxjs/operators';
@@ -20,11 +20,12 @@ import { MatSort } from '@angular/material/sort';
 })
 
 export class ClientesComponent implements OnInit  {
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-
   displayedColumns: string[] = ['id', 'documento', 'nombre', 'apellido', 'editar', 'facturar'  ];
   dataSource = new MatTableDataSource();
+
   public  urlEndPoint: string;
   clientes: Cliente[];
   link = '/clientes/page';
@@ -57,10 +58,10 @@ export class ClientesComponent implements OnInit  {
 
   cargarListadoClientesCompleto() {
     this.clienteService.getListadoClientes()
-    .subscribe(clienteTabla => {this.dataSource.data = clienteTabla;
-                                if (clienteTabla.length > 0 ) {
-                                    this.activar = false;
-                                }});
+    .subscribe(datosTabla => {this.dataSource.data = datosTabla;
+                              if (datosTabla.length > 0 ) {
+                                this.activar = false;
+                            }});
     this.loadingService.cerrarModal();
   }
 
