@@ -13,7 +13,6 @@ import Swal from 'sweetalert2';
 import { LoadingService } from '../../generales/services/loading.service';
 
 
-/** Error when invalid control is dirty, touched, or submitted. */
 export class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
     const isSubmitted = form && form.submitted;
@@ -60,7 +59,6 @@ export class FormClienteComponent implements OnInit {
         if (id) {
             this.clienteService.getCliente(id).subscribe(
             (cliente) => {this.cliente = cliente,
-              console.log(cliente);
                           this.asignarDatosFormulario();
             });
         }

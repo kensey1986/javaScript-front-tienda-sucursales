@@ -48,14 +48,17 @@
       <!-- <li *ngIf="!authService.isAuthenticated()">
         <a [routerLink]="['/login']" class="btn btn-outline-primary">Sign In</a></li> -->
       <li *ngIf="authService.isAuthenticated()" class="dropdown mr-1 ">
-        <a class="btn btn-outline-primary dropdown-toggle ml-5 pl-5" href="#"
+        <a class="btn btn-outline-light dropdown-toggle ml-5 pl-5" href="#"
+           mat-raised-button
             role="button" id="dropdownMenuLink" data-toggle="dropdown"
             aria-haspopup="true" aria-expanded="false">
           {{authService.usuario.username}}
         </a>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink mr-5">
-          <button (click)="logout()" class="dropdown-item btn-sm mr-5"
-          type="submit">Cerrar Sesion</button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink mr-1">
+          <button  
+          (click)="logout()" 
+          class="dropdown-item btn btn-rounded btn-outline-dark btn-sm "
+          type="button">Cerrar Sesion</button>
        </div>
       </li>
     </ul>

@@ -1,3 +1,5 @@
+import { UserService } from './../services/user.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FuncionesService } from './../../generales/services/funciones.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../interfaces/user';
@@ -14,13 +16,15 @@ import { Sucursal } from '../../sucursales/interfaces/sucursal';
 })
 
 export class LoginComponent implements OnInit {
+  formularioCreado: FormGroup;
   usuario: User;
   public  urlEndPoint: string;
   public  rol = 'USUARIO';
   sucursales: Sucursal[];
-
+  titulo = 'Bienvenido';
   opcionSeleccionado  = '';
-  verSeleccion = '';
+  hide = true;
+  tmpSucursal: Sucursal;
 
   constructor(
     public authService: AuthService,
@@ -28,6 +32,8 @@ export class LoginComponent implements OnInit {
     public loadingService: LoadingService,
     public funcionesService: FuncionesService,
     public  sucursalService: SucursalService,
+    public formBuilder: FormBuilder,
+    public userService: UserService
   ) {
     this.usuario = new User();
     this.sucursalService.getSucursalLista()
@@ -46,35 +52,34 @@ export class LoginComponent implements OnInit {
       this.loadingService.cerrarModal();
       this.router.navigate(['/clientes']);
     }
+    this.crearFormulario();
   }
 
-  capturar() {
-    // Pasamos el valor seleccionado a la variable verSeleccion
-    this.verSeleccion = this.opcionSeleccionado;
-}
 
   login(): void {
+    this.usuario.username = this.formularioCreado.value.usuario,
+    this.usuario.password = this.formularioCreado.value.password,
+    this.tmpSucursal = this.formularioCreado.value.sucursal;
+    console.log();
     if (this.usuario.username === null || this.usuario.password === null
-          || this.usuario.username === undefined || this.usuario.password === undefined ) {
-            Swal.fire({
-              type: 'error',
-              title: 'Error al Logear',
-              text: 'El Usuario o el Password vacios',
-              footer: 'Intente de nuevo',
-              });
-            return;
-    } else if (this.verSeleccion === null || this.verSeleccion === '' || this.verSeleccion === undefined ) {
+      || this.usuario.username === undefined || this.usuario.password === undefined ) {
+        Swal.fire({
+          type: 'error',
+          title: 'Error al Ingresar',
+          text: 'El Usuario y/o Password vacios',
+          footer: 'Intente de nuevo',
+          });
+        return;
+    } else if ( this.tmpSucursal === null  || this.tmpSucursal === undefined ) {
       Swal.fire({
         type: 'error',
-        title: 'Error al Logear',
+        title: 'Error al Ingresar',
         text: 'Debe Selecionar Sucursal',
         footer: 'Intente de nuevo',
         });
       return;
-
     }
-    sessionStorage.removeItem('idpro');
-    sessionStorage.setItem('sucursal', JSON.stringify(this.verSeleccion));
+    sessionStorage.setItem('sucursal', JSON.stringify(this.tmpSucursal));
     this.loadingService.abrirModal();
     this.authService.login(this.usuario).subscribe(response => {
       // console.log(response);
@@ -84,6 +89,21 @@ export class LoginComponent implements OnInit {
       const usuario = this.authService.usuario;
       if (this.authService.hasRole('ROLE_ADMIN')) {
           this.rol = 'ADMINISTRADOR';
+      } else {
+        this.userService.getUser(usuario.id).subscribe(user => {
+          if (this.tmpSucursal.nombre !== user.sucursal.nombre) {
+            this.authService.logout();
+            this.loadingService.cerrarModal();
+            Swal.fire({
+              type: 'error',
+              title: 'Acceso Denegado',
+              text: 'No tiene autorizacion para ingresar a esta sucursal',
+              footer: 'Intente de nuevo',
+              });
+            this.authService.logout();
+            this.router.navigate(['/login']);
+          }
+        });
       }
       this.router.navigate(['/clientes']);
       this.loadingService.cerrarModal();
@@ -98,11 +118,29 @@ export class LoginComponent implements OnInit {
         this.loadingService.cerrarModal();
         Swal.fire({
           type: 'error',
-          title: 'Error al Logear',
-          text: 'El Usuario o el Password Incorrectos',
+          title: 'Error al Ingresar',
+          text: 'El Usuario y/o el Password Incorrectos',
           footer: 'Intente de nuevo',
           });
       }
+    });
+  }
+
+  crearFormulario() {
+    this.formularioCreado = this.formBuilder.group({
+      usuario: [null, Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20)
+      ])],
+      password: [null, Validators.compose([
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20)
+      ])],
+      sucursal: [null, Validators.compose([
+        Validators.required,
+      ])],
     });
   }
 

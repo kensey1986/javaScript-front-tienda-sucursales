@@ -1,3 +1,4 @@
+import { Sucursal } from './../../sucursales/interfaces/sucursal';
 import { Region } from '../../regiones/interfaces/region';
 export class User {
   id: number;
@@ -16,5 +17,5 @@ export class User {
   foto: string;
   region: Region;
   roles: string [] = [];
-
+  sucursal: Sucursal;
 }

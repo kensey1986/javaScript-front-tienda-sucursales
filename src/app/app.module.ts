@@ -44,6 +44,13 @@ import { MatIconModule} from '@angular/material/icon';
 import { MatDatepickerModule, MatNativeDateModule } from '@angular/material';
 import { MatSelectModule} from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+
 
 import { ListaFacturasComponent } from './facturas/lista-facturas/lista-facturas.component';
 import { ClienteFacturarComponent } from './facturas/cliente-facturar/cliente-facturar.component';
@@ -155,7 +162,7 @@ const routes: Routes = [
   imports: [
 
 
-  BrowserModule,
+    BrowserModule,
     HttpClientModule,
     FormsModule,
     RouterModule.forRoot(routes),
@@ -168,9 +175,14 @@ const routes: Routes = [
     MatInputModule,
     MatIconModule,
     MatFormFieldModule,
+    MatToolbarModule,
     MatCheckboxModule,
-    MatCardModule
-
+    MatCardModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   providers: [ClienteService,
               UserService,

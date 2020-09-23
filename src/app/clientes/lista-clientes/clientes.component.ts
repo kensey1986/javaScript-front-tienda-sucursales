@@ -1,5 +1,5 @@
 import { FuncionesService } from './../../generales/services/funciones.service';
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ViewChild, OnInit } from '@angular/core';
 import { Cliente } from '../interfaces/cliente';
 import { ClienteService } from '../services/cliente.service';
 import { tap } from 'rxjs/operators';
@@ -9,18 +9,28 @@ import { ModalClienteService  } from '../services/modal-cliente.service';
 import { AuthService } from '../../users/services/auth.service';
 import { ModalFacturaService } from '../../facturas/services/modalFactura.service';
 import { LoadingService } from '../../generales/services/loading.service';
+import { MatTableDataSource } from '@angular/material';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+
 
 @Component({
   selector: 'app-clientes',
   templateUrl: './clientes.component.html'
 })
 
-export class ClientesComponent implements OnInit {
+export class ClientesComponent implements OnInit  {
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+
+  displayedColumns: string[] = ['id', 'documento', 'nombre', 'apellido', 'editar', 'facturar'  ];
+  dataSource = new MatTableDataSource();
   public  urlEndPoint: string;
   clientes: Cliente[];
   link = '/clientes/page';
   paginador: any;
   titulo: string;
+  activar = true;
 
   constructor(
     public  clienteService: ClienteService,
@@ -34,8 +44,27 @@ export class ClientesComponent implements OnInit {
     }
 
   ngOnInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
     this.titulo = this.funcionesService.setTitulo();
     this.loadingService.abrirModal();
+    this.cargarListadoClientesCompleto();
+
+    setTimeout( () => {
+      this.loadingService.cerrarModal();
+    }, 2500);
+  }
+
+  cargarListadoClientesCompleto() {
+    this.clienteService.getListadoClientes()
+    .subscribe(clienteTabla => {this.dataSource.data = clienteTabla;
+                                if (clienteTabla.length > 0 ) {
+                                    this.activar = false;
+                                }});
+    this.loadingService.cerrarModal();
+  }
+
+  cargarClientesPaginas( ) {
     this.activatedRoute.paramMap.subscribe( params => {
       let page: number = +params.get('page');
       if (!page) {
@@ -55,7 +84,14 @@ export class ClientesComponent implements OnInit {
       this.paginador = response;
       });
     });
+  }
 
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+  notificadorModal(){
     this.modalClienteService.notificarUpload.subscribe(cliente => {
       this.clientes = this.clientes.map( clienteOriginal => {
         if (cliente.id === clienteOriginal.id) {
@@ -64,12 +100,7 @@ export class ClientesComponent implements OnInit {
         return clienteOriginal;
       });
     });
-
-    setTimeout( () => {
-      this.loadingService.cerrarModal();
-    }, 3000);
   }
-
   delete(cliente: Cliente): void {
     Swal.fire({
       title: '¿ Estas Seguro ?',

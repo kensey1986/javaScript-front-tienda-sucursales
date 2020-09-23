@@ -45,6 +45,12 @@ constructor(public  http: HttpClient,
          }));
   }
 
+  getListadoClientes(): Observable<Cliente[]> {
+    return this.http.get<Cliente[]>(
+      `${this.urlEndPoint}`
+    );
+  }
+
   create(cliente: Cliente): Observable<Cliente> {
     return this.http.post(this.urlEndPoint, cliente).pipe(
       map((response: any ) => response.cliente as Cliente ),

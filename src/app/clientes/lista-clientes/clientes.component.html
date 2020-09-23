@@ -1,97 +1,164 @@
 <app-loading *ngIf="loadingService.modal"></app-loading>
-<app-cliente-facturar></app-cliente-facturar>
-<div class="card  mb-3">
-  <div class="card-header bg-dark text-muted"><h3><strong>{{titulo}}</strong></h3></div>
-  <div class="card-body">
-    <h4 class="card-title text-muted">Listado de Clientes</h4>
-    <div class="row">
-      <div class="col-sm-2">
-        <div class="my-2 text-left">
-          <button class="btn btn-rounded btn-outline-primary btn-xs"
-          type="button"
-          (click)="abrirModal()"
-          >
-            Buscar Cliente
-          </button>
-        </div>
-      </div>
-      <div class="col-sm-10">
-        <div class="my-2 text-left">
+<mat-card class="bg-dark">
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>
+        <h3>
+          <strong class="text-white">{{ titulo }}</strong>
+        </h3>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <h4>
+          <strong class="text-white-50"> Listado de Clientes</strong>
+        </h4>
+      </mat-card-subtitle>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-actions class="text-white  ml-2 my-3">
+      <button
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs"
+        type="button"
+        [routerLink]="['/clientes/form']"
+      >
+        Crear Cliente
+      </button>
+      <button
+        [disabled]="[activar]"
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
+        type="button"
+        (click)="abrirModal()"
+      >
+        Buscar Cliente
+      </button>
+    </mat-card-actions>
+    <div class="alert alert-info" *ngIf="clientes?.length == 0">
+      <mat-label>
+        <strong>No hay registros en la Base de Datos</strong>
+      </mat-label>
+    </div>
+    <mat-form-field
+      *ngIf="dataSource "
+      style="font-size: 14px; width: 100%"
+      class="bg-light mb-2 p-2"
+    >
+      <mat-label class="ml-2">Filtro</mat-label>
+      <input
+      autocomplete="off"
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ej. ium"
+        #input
+      />
+    </mat-form-field>
+    
+    <table
+      matSort 
+      style="width: 100%"
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z8"
+    >
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>Detalle</th>
+        <td mat-cell *matCellDef="let element">
+          <img
+            *ngIf="element?.foto"
+            [routerLink]="['/clientes/details', element.id]"
+            src="{{ urlEndPoint }}api/uploads/imgcliente/{{ element.foto }}"
+            alt="{{ element.foto }}"
+            class="img-thumbnail rounded"
+            style="width: 40px; cursor: pointer"
+          />
+          <img
+            *ngIf="!element?.foto"
+            [routerLink]="['/clientes/details', element.id]"
+            src="{{ urlEndPoint }}images/no-usuario.png"
+            alt="sin-foto"
+            class="img-thumbnail rounded"
+            style="width: 40px; cursor: pointer"
+          />
+        </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="documento">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+         <strong> Documento </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.documento }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="nombre">
+        <th mat-sort-header
+          style="text-align: left" mat-header-cell *matHeaderCellDef >
+         <strong> Nombre </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.nombre | uppercase }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="apellido">
+        <th  mat-sort-header
+          style="text-align: left" mat-header-cell *matHeaderCellDef>
+          <strong> Apellido </strong> 
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.apellido | uppercase }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="editar">
+        <th style="text-align: center" mat-header-cell *matHeaderCellDef>
+          <strong> Editar </strong> 
+        </th>
+        <td style="text-align: center" mat-cell *matCellDef="let element">
           <button
-                  class="btn btn-rounded btn-outline-info btn-xs"
-                  type="button"
-                   [routerLink]="['/clientes/form']"
+            mat-raised-button
+            class="btn btn-rounded btn-outline-dark btn-sm "
+            type="button"
+            [routerLink]="['/clientes/form', element.id]"
           >
-            Crear Cliente
+            Editar
           </button>
-        </div>
-      </div>
-    </div>
-    <div class="alert alert-info"
-        *ngIf="clientes?.length == 0" >
-        <span class="text-muted"><strong>No hay registros en la Base de Datos</strong></span>
-    </div>
-    <table class='table table-bordered table-striped'
-                  *ngIf="clientes?.length>0" >
-      <thead class="bg-dark text-center text-muted">
-        <tr>
-          <th>Detalles</th>
-          <th>Documento</th>
-          <th>Nombre</th>
-          <th>Apellido</th>
-          <th>Celular</th>
-          <th>Facturar</th>
-          <th>Editar</th>
-          <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</th> -->
-        </tr>
-      </thead>
-      <tbody class="text-center">
-        <tr *ngFor="let cliente of clientes" >
-          <td>
-              <img *ngIf="cliente?.foto"  [routerLink]="['/clientes/details', cliente.id]"
-                  src="{{urlEndPoint}}api/uploads/imgcliente/{{cliente.foto}}"
-              alt="{{cliente.foto}}" class="img-thumbnail rounded"
-              style="width: 64px; cursor: pointer;">
-              <img *ngIf="!cliente?.foto"  [routerLink]="['/clientes/details', cliente.id]"
-                  src="{{urlEndPoint}}images/no-usuario.png"
-              alt="sin-foto" class="img-thumbnail rounded"
-              style="width: 64px; cursor: pointer;">
-          </td>
-            <td>{{cliente.documento}}</td>
-              <td>{{cliente.nombre | uppercase}}</td>
-                <td>{{cliente.apellido | uppercase}}</td>
-                <td>{{cliente.celular1 }}</td>
-                  <td>
-                    <button type="button"
-                            class="btn btn-rounded btn-outline-success btn-xs"
-                            [routerLink]="['/facturas/form', cliente.id]"
-                            >
-                    Crear Factura
-                  </button>
-                  </td>
-                  <td>
-                    <button type="button"
-                        class="btn btn-rounded btn-outline-secondary btn-xs"
-                        [routerLink]="['/clientes/form', cliente.id]"
-                        >
-                      Editar
-                    </button>
-                  </td>
-                  <!-- <td *ngIf="authService.hasRole('ROLE_ADMIN')">
-                      <button type="button"
-                          class="btn btn-outline-danger"
-                          (click)="delete(cliente)"
-                          >
-                        Eliminar
-                      </button>
-                  </td> -->
-                    <!-- <th>{{cliente.createAt}}</th> -->
-        </tr>
-      </tbody>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="facturar">
+        <th style="text-align: center" mat-header-cell *matHeaderCellDef>
+          <strong> Facturar </strong> 
+        </th>
+        <td style="text-align: center" mat-cell *matCellDef="let element">
+          <button
+            mat-raised-button
+            class="btn btn-rounded btn-outline-dark btn-sm "
+            type="button"
+            [routerLink]="['/facturas/form', element.id]"
+          >
+            Crear Factura
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+         No se encontraron datos con:  "{{ input.value }}"
+        </td>
+      </tr>
     </table>
-    <app-paginador *ngIf="paginador"
-    [paginador]="paginador"
-    [link]="link">
-    </app-paginador>
-  </div>
-</div>
+    <mat-paginator [pageSizeOptions]="[5, 10, 20, 30]" showFirstLastButtons></mat-paginator>
+  </mat-card-content>
+</mat-card>
