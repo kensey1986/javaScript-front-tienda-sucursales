@@ -1,80 +1,162 @@
 <app-loading *ngIf="loadingService.modal"></app-loading>
-<div class="card  mb-3">
-<div class="card-header bg-dark text-muted"><h3><strong>{{titulo}}</strong></h3></div>
-<div class="card-body">
-<h4 class="card-title text-muted">Listado de Reportes</h4>
-<!-- <div class="row">
-  <div class="col-sm-2">
-    <div class="my-2 text-left">
-      <button class="btn btn-rounded btn-outline-primary btn-xs"
-      type="button"
-      (click)="abrirModalBuscarFactura()"
-      >
-        Buscar Factura
-      </button>
+<mat-card class="bg-dark">
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>
+        <h3>
+          <strong class="text-white">{{ titulo }}</strong>
+        </h3>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <h4>
+          <strong class="text-white-50"> Listado de Reportes</strong>
+        </h4>
+      </mat-card-subtitle>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-form-field
+      *ngIf="!activar"
+      style="font-size: 14px; width: 100%"
+      class="bg-light mb-2 p-2"
+    >
+      <mat-label class="ml-2">Filtro</mat-label>
+      <input
+        autocomplete="off"
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ej. ium"
+        #input
+      />
+    </mat-form-field>
+    <table
+      matSort
+      style="width: 100%"
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z8"
+    >
+      <!-- Position Column -->
+      <ng-container matColumnDef="detalle">
+        <th mat-header-cell *matHeaderCellDef><strong>Detalle</strong></th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-button [routerLink]="['/reportes/details', element.id]">
+            <mat-icon
+              matBadge="Ver"
+              matBadgePosition="before"
+              matBadgeColor="accent"
+              >article</mat-icon
+            >
+          </button>
+        </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="producto.nombre">
+        <th style="text-align: center"
+           mat-header-cell *matHeaderCellDef >
+          <strong> Producto </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          <button
+            [routerLink]="['/productos/details', element.producto.id]"
+            mat-button
+          >
+            {{ element.producto.nombre }}
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="id">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Reporte N° </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.id }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="nombre">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Tipo </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.nombre | uppercase }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="createAt">
+        <th
+          mat-sort-header
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Creado </strong>
+        </th>
+        <td style="text-align: right" mat-cell *matCellDef="let element">
+          {{ element.createAt | date: "EEEE dd, MMMM yyyy" }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="fechaModificado">
+        <th
+          mat-sort-header
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Modificado </strong>
+        </th>
+        <td style="text-align: right" mat-cell *matCellDef="let element">
+          {{ element.fechaModificado | date: "EEEE dd, MMMM yyyy" }}
+        </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="editar">
+        <th style="text-align: center" mat-header-cell *matHeaderCellDef>
+          <strong> Actualizar </strong>
+        </th>
+        <td style="text-align: center" mat-cell *matCellDef="let element">
+          <button
+            mat-raised-button
+            class="btn btn-rounded btn-outline-dark btn-sm"
+            type="button"
+            [routerLink]="['/reportes/form', element.id]"
+          >
+            Actualizar
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No se encontraron datos con: "{{ input.value }}"
+        </td>
+      </tr>
+    </table>
+    <mat-paginator
+      *ngIf="!activar"
+      [pageSizeOptions]="[5, 10, 20, 30]"
+      showFirstLastButtons
+    ></mat-paginator>
+    <div class="alert alert-info" *ngIf="activar">
+      <mat-label>
+        <strong>No hay registros en la Base de Datos</strong>
+      </mat-label>
     </div>
-  </div>
-  <div class="col-sm-10">
-    <div class="my-2 text-left">
-      <button class="btn btn-rounded btn-outline-success btn-xs"
-      type="button"
-      (click)="abrirModal()"
-      >
-        Crear Factura
-      </button>
-  </div>
-  </div>
-</div> -->
-
-<div class="alert alert-info"
-  *ngIf="reportes?.length == 0" >
-  <span class="text-muted"><strong>No hay registros en la Base de Datos</strong></span>
-</div>
-<table class='table table-bordered table-striped'
-            *ngIf="reportes?.length>0" >
-<thead class="bg-dark text-center text-white">
-  <tr>
-    <th>Detalles</th>
-    <th>Producto Nº</th>
-    <th>Reporte Nº</th>
-    <th>Tipo </th>
-    <th>Descripcion</th>
-    <th>Creado</th>
-    <th>Modificado</th>
-    <th *ngIf="authService.hasRole('ROLE_ADMIN')">Editar</th>
-  </tr>
-</thead>
-<tbody class="text-center">
-  <tr *ngFor="let reporte of reportes" >
-    <td>
-        <img  [routerLink]="['/reportes', reporte.id]"
-            src="{{urlEndPoint}}images/factura.jpg"
-        alt="sin-foto" class="img-thumbnail rounded"
-        style="width: 64px; cursor: pointer;">
-    </td>
-    <td>{{reporte.id}}</td>
-    <td>{{reporte.producto.nombre}}</td>
-    <td>{{reporte.nombre}}</td>
-    <td>{{reporte.descripcion}}</td>
-    <td>{{reporte.createAt | date:'EEEE dd, MMMM yyyy'}}</td>
-    <td>{{reporte.fechaModificado | date:'EEEE dd, MMMM yyyy'}}</td>
-    <td *ngIf="authService.hasRole('ROLE_ADMIN')"> <button
-        [routerLink]="['/reportes/form/', reporte.id]"
-        class="btn btn-rounded btn-outline-secondary btn-xs"
-        type="button">
-        Editar
-    </button>
-    </td>
-    
-  </tr>
-</tbody>
-</table>
-    <app-paginador *ngIf="paginador"
-        [paginador]="paginador"
-        [link]="link">
-    </app-paginador>
-</div>
-</div>
-
-
-
+  </mat-card-content>
+</mat-card>

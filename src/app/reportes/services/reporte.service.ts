@@ -47,6 +47,13 @@ export class ReporteService {
     return this.http.get<Reporte>(`${this.urlEndPoint}/${id}`);
   }
 
+  getListadoReportes(): Observable<Reporte[]> {
+    return this.http.get<Reporte[]>(
+      `${this.urlEndPoint}`
+    );
+  }
+
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.urlEndPoint}/${id}`);
   }

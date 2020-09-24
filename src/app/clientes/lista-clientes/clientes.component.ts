@@ -25,13 +25,14 @@ export class ClientesComponent implements OnInit  {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   displayedColumns: string[] = ['id', 'documento', 'nombre', 'apellido', 'editar', 'facturar'  ];
   dataSource = new MatTableDataSource();
+  activar = true;
+
 
   public  urlEndPoint: string;
   clientes: Cliente[];
   link = '/clientes/page';
   paginador: any;
   titulo: string;
-  activar = true;
 
   constructor(
     public  clienteService: ClienteService,
@@ -45,12 +46,11 @@ export class ClientesComponent implements OnInit  {
     }
 
   ngOnInit() {
+    this.loadingService.abrirModal();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.titulo = this.funcionesService.setTitulo();
-    this.loadingService.abrirModal();
     this.cargarListadoClientesCompleto();
-
     setTimeout( () => {
       this.loadingService.cerrarModal();
     }, 2500);
@@ -61,8 +61,8 @@ export class ClientesComponent implements OnInit  {
     .subscribe(datosTabla => {this.dataSource.data = datosTabla;
                               if (datosTabla.length > 0 ) {
                                 this.activar = false;
+                                this.loadingService.cerrarModal();
                             }});
-    this.loadingService.cerrarModal();
   }
 
   cargarClientesPaginas( ) {
@@ -92,16 +92,6 @@ export class ClientesComponent implements OnInit  {
     this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
-  notificadorModal(){
-    this.modalClienteService.notificarUpload.subscribe(cliente => {
-      this.clientes = this.clientes.map( clienteOriginal => {
-        if (cliente.id === clienteOriginal.id) {
-          clienteOriginal.foto = cliente.foto;
-        }
-        return clienteOriginal;
-      });
-    });
-  }
   delete(cliente: Cliente): void {
     Swal.fire({
       title: '¿ Estas Seguro ?',

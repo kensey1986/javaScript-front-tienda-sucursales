@@ -80,6 +80,7 @@ export class FormUserComponent implements OnInit {
   update(): void {
     this.loadingService.abrirModal();
     this.asignarDatosParaGuardar();
+    console.log(this.user);
     this.userService.update(this.user)
     .subscribe(
       user => {

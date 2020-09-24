@@ -1,21 +1,27 @@
 import { FuncionesService } from './../../generales/services/funciones.service';
 import { Sucursal } from './../../sucursales/interfaces/sucursal';
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { User } from '../interfaces/user';
 import { UserService } from '../services/user.service';
-import { tap } from 'rxjs/operators';
-import Swal from 'sweetalert2';
 import { ActivatedRoute } from '@angular/router';
 import { ModalUserService  } from '../services/modal-user.service';
 import { AuthService } from '../services/auth.service';
 import { LoadingService } from '../../generales/services/loading.service';
-
+import { MatTableDataSource } from '@angular/material';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html'
 })
 
 export class UsersComponent implements OnInit {
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  displayedColumns: string[] = ['id', 'documento', 'nombre', 'apellido', 'username', 'rol', 'enabled', 'editar'];
+  dataSource = new MatTableDataSource();
+  activar = true;
+
   users: User[];
   paginador: any;
   userSelecionado: User;
@@ -34,70 +40,42 @@ export class UsersComponent implements OnInit {
     ) { this.urlEndPoint = `${this.funcionesService.setUrlBase()}`;  }
 
   ngOnInit() {
-    this.titulo = this.funcionesService.setTitulo();
     this.loadingService.abrirModal();
-    this.activatedRoute.paramMap.subscribe( params => {
-      let page: number = +params.get('page');
-      if (!page) {
-          page = 0;
-      }
-      this.userService.getUsers(page)
-    .pipe(
-      tap( response => {
-        // console.log('UsersComponent: tap 3');
-        (response.content as User[]).forEach(user => {
-          this.loadingService.cerrarModal();
-        //  console.log(user.roles.length);
-        });
-      })
-    ).subscribe(response => {
-      this.users = response.content as User[];
-      this.paginador = response;
-    });
-  });
-
-    this.modalUserService.notificarUpload.subscribe(user => {
-      this.users = this.users.map( userOriginal => {
-        if (user.id === userOriginal.id) {
-          userOriginal.foto = user.foto;
-        }
-        return userOriginal;
-      });
-    });
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.cargarListadoUsuariosCompleto();
+    this.titulo = this.funcionesService.setTitulo();
     setTimeout( () => {
       this.loadingService.cerrarModal();
     }, 3000);
   }
 
-  delete(user: User): void {
-    Swal.fire({
-      title: '¿ Estas Seguro ?',
-      text: `¿Seguro De Eliminar Al Usuario ${user.nombre} ${user.apellido} ?`,
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, Eliminar Usuario!'
-    }).then((result) => {
-      if (result.value) {
-          this.userService.delete(user.id).subscribe(
-            response => {
-              this.users = this.users.filter(cli => cli !== user);
-              Swal.fire(
-                'Borrado!',
-                `Usuario ${user.nombre} eliminado con Exito.`,
-                'success'
-              );
-            }
-          );
-      }
-    });
+  cargarListadoUsuariosCompleto() {
+    this.userService.getListadoUsuarios()
+    .subscribe(datosTabla => {this.dataSource.data = datosTabla; console.log(datosTabla);
+                              if (datosTabla.length > 0 ) {
+                                this.activar = false;
+                                this.loadingService.cerrarModal();
+                            }});
   }
 
-  abrirModal(user: User) {
-    this.userSelecionado = user;
-    this.modalUserService.abrirModal();
+
+  applyFilter(event: Event) {
+    let filterValue = (event.target as HTMLInputElement).value;
+    if ( filterValue === 'act' || filterValue === 'acti' || filterValue === 'activ' || filterValue === 'activo') {
+        filterValue = 'true';
+    }
+    if ( filterValue === 'des' ||
+        filterValue === 'desa' || filterValue === 'desac' ||
+        filterValue === 'desact' || filterValue === 'desacti' ||
+        filterValue === 'desactiv' || filterValue === 'desactivo' ||
+        filterValue === 'desactiva' || filterValue === 'desactivad' ||
+        filterValue === 'desactivado' ) {
+      filterValue = 'false';
   }
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
 
   tipoUsuarios(num: number): string {
     if (num === 1) {

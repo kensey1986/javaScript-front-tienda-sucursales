@@ -51,8 +51,7 @@
         {{ factura.createAt | date: "fullDate" }}
       </li>
       <li class="list-group-item">
-        <strong>Vendedor: </strong> {{ factura.usuario.nombre }}
-        {{ factura.usuario.apellido }}
+        <strong>Vendedor: </strong> {{ factura.usuario }}
       </li>
     </ul>
 

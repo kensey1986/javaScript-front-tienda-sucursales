@@ -50,6 +50,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { MatBadgeModule } from '@angular/material/badge';
 
 
 import { ListaFacturasComponent } from './facturas/lista-facturas/lista-facturas.component';
@@ -86,7 +87,7 @@ const routes: Routes = [
   {path: 'productos', component: ProductosComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'productos/informes', component: InformesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'productos/page/:page', component: ProductosComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
-  {path: 'productos/detalle/:id', component: DetalleProductoComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
+  {path: 'productos/details/:id', component: DetalleProductoComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'productos/form', component: FormProductoComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
   {path: 'productos/form/:id', component: FormProductoComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
 
@@ -104,7 +105,7 @@ const routes: Routes = [
   {path: 'facturas', component: ListaFacturasComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'facturas/page/:page', component: ListaFacturasComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'facturas/form/:clienteId', component: FacturasComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
-  {path: 'facturas/:id', component: DetalleFacturaComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
+  {path: 'facturas/details/:id', component: DetalleFacturaComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'factura/filtrar', component: FiltrarFacturasComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
 
   {path: 'sucursales', component: ListaSucursalesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
@@ -116,7 +117,7 @@ const routes: Routes = [
   {path: 'reportes', component: ListadoReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'reportes/form', component: FormReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'reportes/form/:reporteId', component: FormReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
-  {path: 'reportes/:id', component: DetalleReporteComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
+  {path: 'reportes/details/:id', component: DetalleReporteComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'sucursales/form/:id', component: FormSucursalesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
   {path: '**', component: Pagina404Component},
 
@@ -182,7 +183,8 @@ const routes: Routes = [
     MatDividerModule,
     MatTableModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatBadgeModule
   ],
   providers: [ClienteService,
               UserService,

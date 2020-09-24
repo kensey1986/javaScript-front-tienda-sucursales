@@ -7,6 +7,7 @@ import { LoadingService } from './../../generales/services/loading.service';
 import { Component, Input, OnInit } from '@angular/core';
 import { Sucursal } from '../interfaces/sucursal';
 import { SucursalService  } from '../services/sucursal.service';
+import { User } from 'src/app/users/interfaces/user';
 
 @Component({
   selector: 'app-detalle-sucursal',
@@ -35,7 +36,7 @@ export class DetalleSucursalComponent implements OnInit  {
       this.sucursalService.getSucursal(id)
       .subscribe(
         sucursal => {this.sucursal = sucursal,
-                    this.loadingService.cerrarModal();
+                     this.loadingService.cerrarModal();
         });
     });
   }

@@ -35,3 +35,7 @@
   width: 100%;
 }
 
+.boton:hover{
+  background-color: blue;
+  color: black;
+}

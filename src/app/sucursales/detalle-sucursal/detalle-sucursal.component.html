@@ -75,9 +75,7 @@
         </div>
      
   </div>
-  <div class="row" >
-     
-    </div>
+ 
     <div class="row">
 
       <div class="alert alert-info my-4" *ngIf="sucursal.facturas.length == 0">
@@ -115,6 +113,33 @@
         <a [routerLink]="['/clientes']"
             class="btn btn-outline-warning btn-xs my-3">
             &laquo; Regresar</a>
+      </table>
+
+    </div>
+    <div class="row">
+
+      <div class="alert alert-info my-4" *ngIf="sucursal.usuarios.length == 0">
+        No hay Usuarios asignadoss para la Sucursal:
+        <strong> {{sucursal.nombre}}  </strong>
+      </div>
+
+      <table class="table table-bordered text-center table-striped my-4"
+                    *ngIf="sucursal.usuarios.length > 0">
+        <thead class="bg-dark  text-white">
+          <tr>
+            <th>id</th>
+            <th>Nombre</th>
+            <th>nick</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of sucursal.usuarios">
+            <td>{{user.id}}</td>
+            <td>{{user.nombre}}</td>
+            <td>{{user.username}}</td>
+          </tr>
+        </tbody>
+     
       </table>
 
     </div>

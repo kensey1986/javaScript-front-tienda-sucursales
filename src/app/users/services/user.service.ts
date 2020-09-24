@@ -43,6 +43,12 @@ constructor(public  http: HttpClient,
            }));
     }
 
+    getListadoUsuarios(): Observable<User[]> {
+      return this.http.get<User[]>(
+        `${this.urlEndPoint}`
+      );
+    }
+
   create(user: User): Observable<User> {
    return this.http.post<User>(this.urlEndPoint, user).pipe(
       map((response: any ) => response.user as User ),

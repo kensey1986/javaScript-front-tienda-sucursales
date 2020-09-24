@@ -64,7 +64,7 @@
           <tbody>
             <tr  *ngIf="factura" >
               <td>
-                  <img  [routerLink]="['/facturas', factura.id]"
+                  <img  [routerLink]="['/facturas/details', factura.id]"
                       src="{{urlEndPoint}}images/factura.jpg"
                   alt="sin-foto" class="img-thumbnail rounded"
                   style="width: 64px; cursor: pointer;">

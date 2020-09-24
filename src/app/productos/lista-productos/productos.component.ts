@@ -22,7 +22,7 @@ export class ProductosComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  displayedColumns: string[] = ['id', 'codigo', 'nombre', 'precio', 'cantidad', 'compra', 'venta' ];
+  displayedColumns: string[] = ['id', 'codigo', 'nombre', 'precio', 'cantidad', 'createAt', 'fechaVenta' ];
   dataSource = new MatTableDataSource();
 
   activar = true;
@@ -44,38 +44,11 @@ export class ProductosComponent implements OnInit {
 
   ngOnInit() {
     this.cerrarModalBusquedaProducto();
+    this.loadingService.abrirModal();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.cargarListadoProductosCompleto();
     this.titulo = this.funcionesService.setTitulo();
-    this.loadingService.abrirModal();
-    this.activatedRoute.paramMap.subscribe( params => {
-      let page: number = +params.get('page');
-      if (!page) {
-          page = 0;
-      }
-      this.productoService.getProductos(page)
-    .pipe(
-      tap( response => {
-        // console.log('ProductoComponent: tap 3');
-        (response.content as Producto[]).forEach(producto => {
-          this.loadingService.cerrarModal();
-        //  console.log(producto);
-        });
-      })
-    ).subscribe(response => {
-      this.productos = response.content as Producto[];
-      this.paginador = response;
-    });
-    });
-    this.modalProductoService.notificarUpload.subscribe(producto => {
-      this.productos = this.productos.map( productoOriginal => {
-        if (producto.id === productoOriginal.id) {
-          productoOriginal.foto = producto.foto;
-        }
-        return productoOriginal;
-      });
-    });
     setTimeout( () => {
       this.loadingService.cerrarModal();
     }, 2500);
@@ -86,8 +59,8 @@ export class ProductosComponent implements OnInit {
     .subscribe(datosTabla => {this.dataSource.data = datosTabla;
                               if (datosTabla.length > 0 ) {
                                     this.activar = false;
+                                    this.loadingService.cerrarModal();
                                 }});
-    this.loadingService.cerrarModal();
   }
 
   delete(producto: Producto): void {
@@ -112,6 +85,28 @@ export class ProductosComponent implements OnInit {
             }
           );
       }
+    });
+  }
+
+  cargarProductosConPagina() {
+    this.activatedRoute.paramMap.subscribe( params => {
+      let page: number = +params.get('page');
+      if (!page) {
+          page = 0;
+      }
+      this.productoService.getProductos(page)
+    .pipe(
+      tap( response => {
+        // console.log('ProductoComponent: tap 3');
+        (response.content as Producto[]).forEach(producto => {
+          this.loadingService.cerrarModal();
+        //  console.log(producto);
+        });
+      })
+    ).subscribe(response => {
+      this.productos = response.content as Producto[];
+      this.paginador = response;
+    });
     });
   }
 

@@ -63,8 +63,8 @@ export class FacturasComponent implements OnInit {
       this.sucursalService.getSucursal(this.sucursal.id)
       .subscribe(sucursal => (this.factura.sucursal = sucursal, console.log(this.factura)));
       this.userService.getUser(JSON.parse(sessionStorage.getItem('usuario')).id)
-      .subscribe(usuario => {this.factura.usuario = usuario,
-        this.loadingService.cerrarModal();
+      .subscribe(usuario => {this.factura.usuario = (`${usuario.nombre} ${usuario.apellido}`);
+                             this.loadingService.cerrarModal();
       });
       this.cargarUltimaFactura();
     });
@@ -195,7 +195,7 @@ export class FacturasComponent implements OnInit {
                 footer: 'Intente de nuevo',
                 });
               this.loadingService.cerrarModal();
-              this.router.navigate(['/facturas', factura.id]);
+              this.router.navigate(['/facturas/details', factura.id]);
             },
             err => {
               this.errores = err.error.errors as string[],

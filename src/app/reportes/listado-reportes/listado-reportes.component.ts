@@ -1,5 +1,5 @@
 import { ReporteService } from './../services/reporte.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { Reporte } from '../interfaces/Reporte';
 import { tap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -7,6 +7,9 @@ import { AuthService } from '../../users/services/auth.service';
 import { ProductoService } from '../../productos/services/producto.service';
 import { FuncionesService } from '../../generales/services/funciones.service';
 import { LoadingService } from '../../generales/services/loading.service';
+import { MatTableDataSource } from '@angular/material';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -15,7 +18,14 @@ import { LoadingService } from '../../generales/services/loading.service';
 })
 
 export class ListadoReportesComponent implements OnInit {
-  dato = ' prueba ';
+
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  displayedColumns: string[] = ['detalle',  'producto.nombre', 'id', 'nombre', 'createAt', 'fechaModificado', 'editar'  ];
+  dataSource = new MatTableDataSource();
+  activar = true;
+
+
   reportes: Reporte[];
   paginador: any;
   link = '/facturas/page';
@@ -33,7 +43,25 @@ export class ListadoReportesComponent implements OnInit {
 
   ngOnInit() {
     this.loadingService.abrirModal();
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.cargarListadoReportesCompleto();
     this.titulo = this.funcionesService.setTitulo();
+    setTimeout( () => {
+      this.loadingService.cerrarModal();
+    }, 3000);
+  }
+
+  cargarListadoReportesCompleto() {
+    this.reporteService.getListadoReportes()
+    .subscribe(datosTabla => {this.dataSource.data = datosTabla;
+                              if (datosTabla.length > 0 ) {
+                                this.activar = false;
+                                this.loadingService.cerrarModal();
+                            }});
+  }
+
+  cargarListadoReportesPagina() {
     this.activatedRoute.paramMap.subscribe( params => {
       let page: number = +params.get('page');
       if (!page) {
@@ -53,20 +81,16 @@ export class ListadoReportesComponent implements OnInit {
       this.paginador = response;
       });
     });
-    setTimeout( () => {
-      this.loadingService.cerrarModal();
-    }, 3000);
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   formatNumber(cantidad: number): string {
     return this.funcionesService.formatNumber(cantidad);
   }
 
-  // abrirModal() {
-  //   this.modalFacturaService.abrirModal();
-  // }
-  // abrirModalBuscarFactura() {
-  //   this.modalFacturaBuscarService.abrirModal();
-  // }
 
 }

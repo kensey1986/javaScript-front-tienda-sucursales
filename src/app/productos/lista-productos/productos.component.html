@@ -45,9 +45,9 @@
         Informes
       </button>
     </mat-card-actions>
-   
+
     <mat-form-field
-    *ngIf="!activar"
+      *ngIf="!activar"
       style="font-size: 14px; width: 100%"
       class="bg-light mb-2 p-2"
     >
@@ -70,24 +70,43 @@
     >
       <!-- Position Column -->
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef> <strong> Detalle </strong></th>
+        <th mat-header-cell *matHeaderCellDef><strong> Detalle </strong></th>
         <td mat-cell *matCellDef="let element">
-          <img
+          <button
             *ngIf="element?.foto"
+            mat-button
             [routerLink]="['/productos/details', element.id]"
-            src="{{ urlEndPoint }}api/uploads/imgproducto/{{ element.foto }}"
-            alt="{{ element.foto }}"
-            class="img-thumbnail rounded"
-            style="width: 40px; cursor: pointer"
-          />
-          <img
+          >
+            <span
+              matBadge="Ver"
+              matBadgePosition="before"
+              matBadgeColor="accent"
+              matBadgeOverlap="false"
+            >
+              <img
+                src="{{ urlEndPoint }}api/uploads/imgproducto/{{
+                  element.foto
+                }}"
+                alt="{{ element.foto }}"
+                class="img-thumbnail rounded"
+                style="width: 60px"
+              />
+            </span>
+          </button>
+          <button
             *ngIf="!element?.foto"
+            mat-button
             [routerLink]="['/productos/details', element.id]"
-            src="{{ urlEndPoint }}images/no-producto.png"
-            alt="sin-foto"
-            class="img-thumbnail rounded"
-            style="width: 40px; cursor: pointer"
-          />
+          >
+            <span
+              matBadge="Ver"
+              matBadgePosition="before"
+              matBadgeColor="accent"
+              matBadgeOverlap="false"
+            >
+              <mat-icon>local_mall</mat-icon>
+            </span>
+          </button>
         </td>
       </ng-container>
       <!-- Name Column -->
@@ -132,38 +151,41 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="cantidad">
-        <th mat-sort-header
-          style="text-align: left" mat-header-cell *matHeaderCellDef>
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
           <strong> Stock </strong>
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
-          <span  style="font-size: 15px;"
-            *ngIf="element.cantidad <= 3">
+          <span style="font-size: 15px" *ngIf="element.cantidad <= 3">
             <strong class="badge badge-danger">
               {{ element.cantidad }}
             </strong>
           </span>
           <span *ngIf="element.cantidad > 3">
-               {{ element.cantidad }}
+            {{ element.cantidad }}
           </span>
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="compra">
-        <th 
+      <ng-container matColumnDef="createAt">
+        <th
           mat-sort-header
-          style="text-align: right;"
+          style="text-align: right"
           mat-header-cell
           *matHeaderCellDef
         >
-          <strong > Fecha Ingreso del Stock </strong> 
+          <strong> Fecha Ingreso del Stock </strong>
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
           {{ element.createAt | date: "EEEE dd, MMMM yyyy" }}
         </td>
       </ng-container>
 
-      <ng-container matColumnDef="venta">
+      <ng-container matColumnDef="fechaVenta">
         <th
           mat-sort-header
           style="text-align: left"
@@ -187,7 +209,8 @@
         </td>
       </tr>
     </table>
-    <mat-paginator *ngIf="!activar"
+    <mat-paginator
+      *ngIf="!activar"
       [pageSizeOptions]="[5, 10, 20, 30]"
       showFirstLastButtons
     ></mat-paginator>

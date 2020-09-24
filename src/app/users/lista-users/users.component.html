@@ -1,74 +1,232 @@
 <app-loading *ngIf="loadingService.modal"></app-loading>
-<app-detalle-user
-      *ngIf="userSelecionado"
-      [user]="userSelecionado"></app-detalle-user>
-<div class="card  mb-3">
-  <div class="card-header bg-dark text-muted"><h3><strong>{{titulo}}</strong></h3></div>
-  <div class="card-body">
-    <h4 class="card-title text-muted">Listado Usuarios</h4>
-    <!-- <div class="my-2 text-left">
-        <button *ngIf="authService.hasRole('ROLE_ADMIN')"
-                class="btn btn-rounded btn-outline-primary"
-                type="button"
-                [routerLink]="['/users/form']"
+<mat-card class="bg-dark">
+  <mat-card-header>
+    <mat-card-title-group>
+      <mat-card-title>
+        <h3>
+          <strong class="text-white">{{ titulo }}</strong>
+        </h3>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <h4>
+          <strong class="text-white-50"> 
+            Listado de Usuarios <mat-icon>groups</mat-icon>
+          </strong>
+        </h4>
+      </mat-card-subtitle>
+    </mat-card-title-group>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-actions class="text-white ml-2 my-3">
+      <button
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs"
+        type="button"
+        [routerLink]="['/users/form']"
+      >
+        Crear Usuario
+        <mat-icon>person_add_alt_1</mat-icon>
+      </button>
+      <!-- <button
+        [disabled]="[activar]"
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
+        type="button"
+        (click)="abrirModal()"
+      >
+        Buscar Cliente
+      </button> -->
+    </mat-card-actions>
+    <mat-form-field
+      *ngIf="!activar"
+      style="font-size: 14px; width: 100%"
+      class="bg-light mb-2 p-2"
+    >
+      <mat-label class="ml-2">Filtro</mat-label>
+      <input
+        autocomplete="off"
+        matInput
+        (keyup)="applyFilter($event)"
+        placeholder="Ej. ium"
+        #input
+      />
+    </mat-form-field>
+
+    <table
+      matSort
+      style="width: 100%"
+      mat-table
+      [dataSource]="dataSource"
+      class="mat-elevation-z8"
+    >
+      <!-- Position Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef><strong>Detalle</strong></th>
+        <td mat-cell *matCellDef="let element">
+          <button
+            *ngIf="element?.foto"
+            mat-button
+            [routerLink]="['/users/details', element.id]"
+          >
+            <span
+              matBadge="Ver"
+              matBadgePosition="before"
+              matBadgeColor="accent"
+              matBadgeOverlap="false"
+            >
+              <img
+                src="{{ urlEndPoint }}api/uploads/imgcliente/{{ element.foto }}"
+                alt="{{ element.foto }}"
+                class="img-thumbnail rounded"
+                style="width: 60px"
+              />
+            </span>
+          </button>
+          <button
+            *ngIf="!element?.foto"
+            mat-button
+            [routerLink]="['/users/details', element.id]"
+          >
+            <span
+              matBadge="Ver"
+              matBadgePosition="before"
+              matBadgeColor="accent"
+              matBadgeOverlap="false"
+            >
+              <mat-icon>person</mat-icon>
+            </span>
+          </button>
+        </td>
+      </ng-container>
+      <!-- Name Column -->
+      <ng-container matColumnDef="documento">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
+          <strong> Documento </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.documento }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="nombre">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
         >
-          Crear Usuarios
-        </button>
-      </div> -->
-      <div class="alert alert-info"
-        *ngIf="users?.length == 0" >
-        <span class="text-muted"><strong>No hay registros en la Base de Datos</strong></span>
-    </div>
-    <table class='table table-bordered table-striped'
-                 *ngIf="users?.length>0" >
-      <thead class="bg-dark text-center text-white">
-        <tr>
-          <th>Detalles</th>
-          <th>Nick</th>
-          <th>Rol</th>
-          <th *ngIf="authService.hasRole('ROLE_ADMIN')">Editar</th>
-          <!-- <th *ngIf="authService.hasRole('ROLE_ADMIN')">Eliminar</th> -->
-        </tr>
-      </thead>
-      <tbody class="text-center">
-        <tr *ngFor="let user of users" >
-          <td>
-              <img *ngIf="user?.foto"  (click)="abrirModal(user)"
-                  src="{{urlEndPoint}}api/uploads/imguser/{{user.foto}}"
-                  alt="{{user.foto}}" class="img-thumbnail rounded"
-                  style="width: 64px; cursor: pointer;">
-              <img *ngIf="!user?.foto"  (click)="abrirModal(user)"
-                  src="{{urlEndPoint}}images/no-usuario.png"
-                  alt="no-usuario" class="img-thumbnail rounded"
-                  style="width: 64px; cursor: pointer;">
-          </td>
+          <strong> Nombre </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.nombre | uppercase }}
+        </td>
+      </ng-container>
 
-          <td>{{user.username | uppercase}}</td>
+      <!-- Name Column -->
+      <ng-container matColumnDef="apellido">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Apellido </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.apellido | uppercase }}
+        </td>
+      </ng-container>
 
-          <td>{{tipoUsuarios(user.roles.length)}}</td>
-          <td *ngIf="authService.hasRole('ROLE_ADMIN')">
-                <button type="button"
-                            class="btn btn-rounded btn-outline-secondary btn-xs"
-                            [routerLink]="['/users/form', user.id]"
-                            >
-                          Editar
-                </button>
-          </td>
-          <!-- <td *ngIf="authService.hasRole('ROLE_ADMIN')">
-              <button type="button"
-                            class="btn btn-outline-danger"
-                            (click)="delete(user)"
-                            >
-                          Eliminar
-              </button>
-          </td> -->
-        </tr>
-      </tbody>
+      <!-- Name Column -->
+      <ng-container matColumnDef="username">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Nick </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.username | uppercase }}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="enabled">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Estado </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          <span style="font-size: 15px" *ngIf="element.enabled === false">
+            <strong class="badge badge-danger">
+              Desactivado
+            </strong>
+          </span>
+          <span *ngIf="element.enabled === true">
+            Activo
+          </span>
+        </td>
+      </ng-container>
+
+       <!-- Name Column -->
+       <ng-container matColumnDef="rol">
+        <th
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Rol </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{tipoUsuarios(element.roles.length)}}
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="editar">
+        <th style="text-align: center" mat-header-cell *matHeaderCellDef>
+          <strong> Editar </strong>
+        </th>
+        <td style="text-align: center" mat-cell *matCellDef="let element">
+          <button
+            mat-raised-button
+            class="btn btn-rounded btn-outline-dark btn-sm"
+            type="button"
+            [routerLink]="['/users/form', element.id]"
+          >
+            Editar
+          </button>
+        </td>
+      </ng-container>
+
+      <!-- Name Column -->
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <!-- Row shown when there is no matching data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="4">
+          No se encontraron datos con: "{{ input.value }}"
+        </td>
+      </tr>
     </table>
-    <app-paginador *ngIf="paginador"
-      [paginador]="paginador"
-      [link]="link">
-    </app-paginador>
-  </div>
-</div>
-
+    <mat-paginator
+      *ngIf="!activar"
+      [pageSizeOptions]="[5, 10, 20, 30]"
+      showFirstLastButtons
+    ></mat-paginator>
+    <div class="alert alert-info" *ngIf="activar">
+      <mat-label>
+        <strong>No hay registros en la Base de Datos</strong>
+      </mat-label>
+    </div>
+  </mat-card-content>
+</mat-card>

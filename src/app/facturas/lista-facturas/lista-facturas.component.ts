@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { FacturaService } from './../services/factura.service';
 import { Factura } from '../interfaces/factura';
 import { tap } from 'rxjs/operators';
@@ -9,6 +9,9 @@ import { ModalFacturaBuscarService } from './../services/modal-factura-buscar.se
 import { ProductoService } from '../../productos/services/producto.service';
 import { FuncionesService } from '../../generales/services/funciones.service';
 import { LoadingService } from '../../generales/services/loading.service';
+import { MatTableDataSource } from '@angular/material';
+import { MatPaginator} from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 
 @Component({
@@ -16,7 +19,13 @@ import { LoadingService } from '../../generales/services/loading.service';
   templateUrl: './lista-facturas.component.html'
 })
 export class ListaFacturasComponent implements OnInit {
-  dato = ' prueba ';
+
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+  displayedColumns: string[] = ['id',  'numeroFactura', 'totalFactura', 'totalGanancia', 'createAt' ];
+  dataSource = new MatTableDataSource();
+  activar = true;
+
   facturas: Factura[];
   facturaFecha: Factura[];
   paginador: any;
@@ -40,32 +49,31 @@ export class ListaFacturasComponent implements OnInit {
   ngOnInit() {
     this.loadingService.abrirModal();
     this.titulo = this.funcionesService.setTitulo();
-    this.activatedRoute.paramMap.subscribe( params => {
-      let page: number = +params.get('page');
-      if (!page) {
-          page = 0;
-      }
-      this.facturaService.getFacturas(page)
-    .pipe(
-      tap( response => {
-        // console.log('FacturasComponent: tap 3');
-        (response.content as Factura[]).forEach(cliente => {
-          this.loadingService.cerrarModal();
-          // console.log(cliente.nombre);
-        });
-      })
-    ).subscribe(response => {
-      this.facturas = response.content as Factura[];
-      this.paginador = response;
-      });
-    });
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.cargarListadoFacturasCompleto();
     setTimeout( () => {
       this.loadingService.cerrarModal();
     }, 3000);
   }
 
+  cargarListadoFacturasCompleto() {
+    this.facturaService.getListadoFacturas()
+    .subscribe(datosTabla => {this.dataSource.data = datosTabla, console.log(datosTabla);
+                              if (datosTabla.length > 0 ) {
+                                this.activar = false;
+                                this.loadingService.cerrarModal();
+                            }});
+  }
+
   formatNumber(cantidad: number): string {
     return this.funcionesService.formatNumber(cantidad);
+  }
+
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   abrirModal() {

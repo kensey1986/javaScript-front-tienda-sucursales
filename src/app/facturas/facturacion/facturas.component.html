@@ -218,6 +218,7 @@
           <h5 class="float-left mx-2" *ngIf="factura.items.length > 0">
             <strong>Descuento</strong>:
             <input
+             (change)="validarDescuento(factura, $event)"
               style="max-width: 120px"
               type="number"
               [(ngModel)]="factura.descuento"
@@ -229,7 +230,7 @@
           <h5 *ngIf="factura.descuento" class="float-right">
             <strong>Descuento</strong>:
             <span class="badge badge-danger">
-              {{ validarDescuento(factura) }}
+              {{ factura.descuento }}
             </span>
           </h5>
 

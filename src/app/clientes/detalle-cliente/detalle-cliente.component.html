@@ -144,7 +144,7 @@
             <td *ngIf="authService.hasRole('ROLE_ADMIN')"
                 class="text-right">{{formatNumber(factura.totalGanancia)}}</td>
             <td class="text-center"><button class="btn btn-primary btn-sm" type="button"
-              [routerLink]="['/facturas', factura.id]">ver</button>
+              [routerLink]="['/facturas/details', factura.id]">ver</button>
             </td>
 
             <!-- <td>
