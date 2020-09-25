@@ -31,10 +31,10 @@ export class FacturasComponent implements OnInit {
   factura: Factura = new Factura();
   errores: string[];
   checked = false;
-  facturas: Factura[];
   sucursal: Sucursal;
   numeroFactura: number;
   estadoNumero = false;
+  activar = false;
   autocompleteControl = new FormControl();
 
   productosFiltrados: Observable<Producto[]>;
@@ -54,37 +54,49 @@ export class FacturasComponent implements OnInit {
 
   ngOnInit() {
     this.loadingService.abrirModal();
-    this.sucursal =   JSON.parse(sessionStorage.getItem('sucursal')) as Sucursal;
     this.titulo = `${this.funcionesService.setTitulo()} - Nueva Factura -`;
     this.activatedRoute.paramMap.subscribe(params => {
-      const clienteId = +params.get('clienteId');
-      this.clienteService.getCliente(clienteId)
-      .subscribe(cliente => (this.factura.cliente = cliente));
-      this.sucursalService.getSucursal(this.sucursal.id)
-      .subscribe(sucursal => (this.factura.sucursal = sucursal, console.log(this.factura)));
-      this.userService.getUser(JSON.parse(sessionStorage.getItem('usuario')).id)
-      .subscribe(usuario => {this.factura.usuario = (`${usuario.nombre} ${usuario.apellido}`);
-                             this.loadingService.cerrarModal();
-      });
-      this.cargarUltimaFactura();
+      this.cargarCliente(+params.get('clienteId'));
+      this.cargarSucursal(JSON.parse(sessionStorage.getItem('sucursal')).id);
+      this.cargarUsuario(JSON.parse(sessionStorage.getItem('usuario')).id);
     });
-    this.productosFiltrados = this.autocompleteControl.valueChanges
-      .pipe(
-        map(value => typeof value === 'string' ? value : value.nombre),
-        flatMap(value => value ? this._filter(value) : [])
-      );
+    this.filtrarProductos();
   }
 
-  cargarUltimaFactura() {
-    this.facturaService.getFacturaUltima()
-          .subscribe(
-           facturas => {this.facturas = facturas,
-                         this.facturas.forEach(datos => {
-                                                          this.numeroFactura = datos.numeroFactura + 1;
-                                                          this.factura.numeroFactura = this.numeroFactura;
-                });
-            },
-          );
+  cargarCliente(clienteId: number) {
+    this.clienteService.getCliente(clienteId)
+    .subscribe(cliente => (this.factura.cliente = cliente));
+  }
+
+  cargarSucursal(sucursalId: number) {
+    this.sucursalService.getSucursal(sucursalId)
+      .subscribe(sucursal => (this.factura.sucursal = sucursal, this.sucursal = sucursal,
+        this.numeroFactura = sucursal.numeroFactura,  this.cargarNumeroFactura()));
+  }
+
+  cargarUsuario(usuarioId: number) {
+    this.userService.getUser(usuarioId)
+      .subscribe(usuario => {this.factura.usuario = (usuario);
+                             this.loadingService.cerrarModal();
+      });
+  }
+
+  filtrarProductos() {
+    this.productosFiltrados = this.autocompleteControl.valueChanges
+    .pipe(
+      map(value => typeof value === 'string' ? value : value.nombre),
+      flatMap(value => value ? this._filter(value) : [])
+    );
+  }
+
+  cargarNumeroFactura() {
+    if ( this.numeroFactura > 0 ) {
+          this.numeroFactura = this.numeroFactura + 1;
+          this.sucursal.numeroFactura = this.numeroFactura;
+          this.factura.numeroFactura = this.numeroFactura;
+        } else {
+          this.activar = true;
+        }
   }
 
   public  _filter(value: string): Observable<Producto[]> {
@@ -180,7 +192,7 @@ export class FacturasComponent implements OnInit {
         item.precioVendido = item.producto.precio;
         item.importe = item.producto.precio * item.cantidad;
       } );
-      this.cargarUltimaFactura();
+      this.cargarSucursal(JSON.parse(sessionStorage.getItem('sucursal')).id);
       this.facturaService.create(this.factura).subscribe(factura => {
         this.factura.items.forEach((item: ItemFactura) => {
           item.producto.cantidad = item.producto.cantidad - item.cantidad;
@@ -188,14 +200,24 @@ export class FacturasComponent implements OnInit {
           this.productoService.update(item.producto)
           .subscribe(
             () => {
-              Swal.fire({
-                type: 'success',
-                title: 'Facturado!',
-                text: `${factura.descripcion} Creada con éxito!`,
-                footer: 'Intente de nuevo',
-                });
-              this.loadingService.cerrarModal();
-              this.router.navigate(['/facturas/details', factura.id]);
+              this.sucursal.numeroFactura = this.factura.numeroFactura;
+              this.sucursalService.update(this.sucursal)
+              .subscribe(
+                () => {
+                  Swal.fire({
+                    type: 'success',
+                    title: 'Facturado!',
+                    text: `${factura.descripcion} Creada con éxito!`,
+                    footer: 'Intente de nuevo',
+                    });
+                  this.loadingService.cerrarModal();
+                  this.router.navigate(['/facturas/details', factura.id]);
+                },
+                err => {
+                  this.errores = err.error.errors as string[];
+                  this.loadingService.cerrarModal();
+                }
+              );
             },
             err => {
               this.errores = err.error.errors as string[],

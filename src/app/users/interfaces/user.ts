@@ -1,6 +1,6 @@
-import { Sucursal } from './../../sucursales/interfaces/sucursal';
+// import { Sucursal } from './../../sucursales/interfaces/sucursal';
 import { Region } from '../../regiones/interfaces/region';
-// import { Factura } from '../../facturas/interfaces/factura';
+import { Factura } from '../../facturas/interfaces/factura';
 export class User {
   id: number;
   fecha: string;
@@ -18,7 +18,7 @@ export class User {
   foto: string;
   region: Region;
   roles: string [] = [];
-  sucursal: Sucursal;
-  // facturas: Array<Factura> = [];
+  // sucursal: Sucursal;
+  facturas: Array<Factura> = [];
   // facturas: Array<Factura> = [];
 }

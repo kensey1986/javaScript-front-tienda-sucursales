@@ -89,22 +89,23 @@ export class LoginComponent implements OnInit {
       const usuario = this.authService.usuario;
       if (this.authService.hasRole('ROLE_ADMIN')) {
           this.rol = 'ADMINISTRADOR';
-      } else {
-        this.userService.getUser(usuario.id).subscribe(user => {
-          if (this.tmpSucursal.nombre !== user.sucursal.nombre) {
-            this.authService.logout();
-            this.loadingService.cerrarModal();
-            Swal.fire({
-              type: 'error',
-              title: 'Acceso Denegado',
-              text: 'No tiene autorizacion para ingresar a esta sucursal',
-              footer: 'Intente de nuevo',
-              });
-            this.authService.logout();
-            this.router.navigate(['/login']);
-          }
-        });
       }
+      // else {
+      //   this.userService.getUser(usuario.id).subscribe(user => {
+      //     if (this.tmpSucursal.nombre !== user.sucursal.nombre) {
+      //       this.authService.logout();
+      //       this.loadingService.cerrarModal();
+      //       Swal.fire({
+      //         type: 'error',
+      //         title: 'Acceso Denegado',
+      //         text: 'No tiene autorizacion para ingresar a esta sucursal',
+      //         footer: 'Intente de nuevo',
+      //         });
+      //       this.authService.logout();
+      //       this.router.navigate(['/login']);
+      //     }
+      //   });
+      // }
       this.router.navigate(['/clientes']);
       this.loadingService.cerrarModal();
       Swal.fire({

@@ -1,4 +1,4 @@
-import { User } from './../../users/interfaces/user';
+// import { User } from './../../users/interfaces/user';
 import { Factura } from '../../facturas/interfaces/factura';
 export class Sucursal {
     id: number;
@@ -16,5 +16,6 @@ export class Sucursal {
     celular1: string;
     celular2: string;
     facturas: Array<Factura> = [];
-    usuarios: Array<User> = [];
+    numeroFactura: number;
+    // usuarios: Array<User> = [];
   }

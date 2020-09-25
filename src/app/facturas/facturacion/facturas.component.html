@@ -25,8 +25,8 @@
               <strong> Numero Factura: </strong>
             </label>
             <div class="col-sm-6" >
-              <input *ngIf="numeroFactura"
-                type="text"
+              <input *ngIf="!activar"
+                type="number"
                 name="numeroFactura"
                 [(ngModel)]="factura.numeroFactura"
                 class="form-control"
@@ -34,11 +34,11 @@
                 #numeroFactura="ngModel"
                 disabled
               />
-            <div *ngIf="!numeroFactura">
+            <div *ngIf="activar">
               <span class="alert alert-danger pb-0 ">Favor Ingresar Numero De Factura Inicial</span>
               <strong>
               <input 
-                type="text"
+                type="number"
                 name="numeroFactura"
                 [(ngModel)]="factura.numeroFactura"
                 class="form-control"

@@ -42,6 +42,7 @@ export class FormSucursalesComponent implements OnInit {
 
   public create(): void {
     this.loadingService.abrirModal();
+    this.sucursal.numeroFactura = this.sucursal.numeroFactura - 1;
     this.sucursalService.create(this.sucursal).subscribe(
       sucursal => {
         this.router.navigate(['/sucursales']),
@@ -63,6 +64,7 @@ export class FormSucursalesComponent implements OnInit {
 
   update(): void {
     this.loadingService.abrirModal();
+    this.sucursal.numeroFactura = this.sucursal.numeroFactura - 1;
     this.sucursalService.update(this.sucursal)
     .subscribe(
       sucursal => {
