@@ -44,6 +44,12 @@ export class FacturaService {
          }));
   }
 
+  getListadoFacturas(): Observable<Factura[]> {
+    return this.http.get<Factura[]>(
+      `${this.urlEndPoint}`
+    );
+  }
+
   getFactura(id: number): Observable<Factura> {
     return this.http.get<Factura>(`${this.urlEndPoint}/${id}`);
   }
