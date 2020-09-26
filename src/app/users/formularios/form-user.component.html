@@ -201,6 +201,34 @@
             </mat-error>
           </div>
         </div>
+        <div class="form-group row">
+          <div class="col-sm-8">
+            <mat-form-field appearance="fill" style="width: 100%;" >
+              <mat-label for="fecha">
+                Fecha Nacimiento
+              </mat-label>
+            <input matInput required
+                [matDatepicker]="fecha"
+                [min]="minDate"
+                [max]="maxDate"
+                formControlName="fecha"
+                placeholder="ej: 18/2/2050"
+               >
+               <mat-datepicker-toggle
+                matSuffix [for]="fecha">
+                </mat-datepicker-toggle>
+                <mat-datepicker  #fecha></mat-datepicker>
+              </mat-form-field>
+                  <mat-error *ngIf="formularioCreado.controls['fecha'].invalid &&
+                              (formularioCreado.controls['fecha'].dirty
+                              || formularioCreado.controls['fecha'].touched )">
+                    <mat-error *ngIf="formularioCreado.controls['fecha'].errors.required"
+                        role="alert">
+                        Fch. Nacimiento es requerida
+                    </mat-error>
+                  </mat-error>
+          </div>
+        </div>
        
       </div>
       <!-- columna derecha -->
@@ -349,30 +377,31 @@
         </div>
         <div class="form-group row">
           <div class="col-sm-8">
-            <mat-form-field appearance="fill" style="width: 100%;" >
-              <mat-label for="fecha">
-                Fecha Nacimiento
+            <mat-form-field appearance="fill" style="width: 100%;"  >
+              <mat-label for="direccion">
+                Rol
               </mat-label>
-            <input matInput required
-                [matDatepicker]="fecha"
-                [min]="minDate"
-                [max]="maxDate"
-                formControlName="fecha"
-                placeholder="ej: 18/2/2050"
-               >
-               <mat-datepicker-toggle
-                matSuffix [for]="fecha">
-                </mat-datepicker-toggle>
-                <mat-datepicker  #fecha></mat-datepicker>
-              </mat-form-field>
-                  <mat-error *ngIf="formularioCreado.controls['fecha'].invalid &&
-                              (formularioCreado.controls['fecha'].dirty
-                              || formularioCreado.controls['fecha'].touched )">
-                    <mat-error *ngIf="formularioCreado.controls['fecha'].errors.required"
+            <mat-select required
+                      formControlName="roles"
+                      name="roles"
+                      style="width: 330px;">
+                      <mat-option
+                        *ngFor="let rol of rolSelect"
+                        [value]="rol"
+                      >
+                        {{rol}}
+                      </mat-option >
+            </mat-select>
+            <mat-icon matSuffix> location_on</mat-icon>
+          </mat-form-field>
+            <mat-error *ngIf="formularioCreado.controls['roles'].invalid &&
+                              (formularioCreado.controls['roles'].dirty
+                              || formularioCreado.controls['roles'].touched )">
+                    <mat-error *ngIf="formularioCreado.controls['roles'].errors.required"
                         role="alert">
-                        Fch. Nacimiento es requerida
+                        Barrio es requerido
                     </mat-error>
-                  </mat-error>
+            </mat-error>
           </div>
         </div>
       </div>

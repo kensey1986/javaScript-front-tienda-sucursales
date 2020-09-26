@@ -1,3 +1,4 @@
+import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
 import { Reporte } from './../../reportes/interfaces/reporte';
 export class Producto {
   id: number;
@@ -11,6 +12,7 @@ export class Producto {
   foto: string;
   codigo: string;
   reportes: Array<Reporte> = [];
+  sucursales: Array<Sucursal> = [];
 }
 
 

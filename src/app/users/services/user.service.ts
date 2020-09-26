@@ -57,6 +57,8 @@ constructor(public  http: HttpClient,
           return throwError(e);
         }
         if (e.error.mensaje) {
+          console.log(e.error);
+          console.log(e.error.mensaje);
           const prueba = (e.error.dato);
           const tmp = prueba.split(`'`);
           Swal.fire({

@@ -51,6 +51,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 import { ListaFacturasComponent } from './facturas/lista-facturas/lista-facturas.component';
@@ -184,7 +185,8 @@ const routes: Routes = [
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatRadioModule
   ],
   providers: [ClienteService,
               UserService,

@@ -92,6 +92,7 @@ export class FormClienteComponent implements OnInit {
   update(): void {
     this.loadingService.abrirModal();
     this.asignarDatosParaGuardar();
+    this.cliente.facturas = null;
     this.clienteService.update(this.cliente)
     .subscribe(
       cliente => {

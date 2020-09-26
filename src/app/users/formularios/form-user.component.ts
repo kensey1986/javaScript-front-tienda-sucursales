@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+// import { Sucursal } from ';
+import { Component, OnInit, ɵReflectionCapabilities } from '@angular/core';
 import { User } from '../interfaces/user';
 import { UserService } from '../services/user.service';
 import { Region } from '../../regiones/interfaces/region';
@@ -24,7 +25,10 @@ export class FormUserComponent implements OnInit {
   regiones: Region[];
   titulo = 'Crear Usuarios';
   errores: string[];
+  roles: string [];
   formularioCreado: FormGroup;
+  rolDisplay: string;
+  rolSelect: string[];
 
   constructor(
     public  userService: UserService,
@@ -39,26 +43,41 @@ export class FormUserComponent implements OnInit {
     this.loadingService.abrirModal();
     this.crearFormulario();
     this.cargarUser();
+    this.rolSelect = ['ADMINISTRADOR', 'USUARIO'];
+    this.regionService.getRegionLista().subscribe(regiones => this.regiones = regiones);
   }
 
-  cargarUser(): void {
+  cargarUser() {
     this.activatedRoute.params.subscribe(
       params => {
         const id = params.id;
         if (id) {
           this.userService.getUser(id).subscribe(
-            user =>  {this.user = user,
+            user =>  {(this.user = user, this.roles = this.user.roles, this.tipoUsuarios(this.roles.length));
                       this.asignarDatosFormulario();
           });
         }
       });
-    this.regionService.getRegionLista().subscribe(regiones => this.regiones = regiones);
     this.loadingService.cerrarModal();
+  }
+
+  // 'ROLE_ADMIN'
+  tipoUsuarios(num: number) {
+    if (num === 1) {
+      this.rolDisplay = 'USUARIO';
+      this.rolSelect = ['USUARIO', 'ADMINISTRADOR' ];
+    } else {
+      this.rolDisplay = 'ADMINISTRADOR';
+      this.rolSelect = ['ADMINISTRADOR', 'USUARIO'];
+    }
   }
 
   public create(): void {
     this.loadingService.abrirModal();
     this.asignarDatosParaGuardar();
+    console.log(this.user);
+    this.user.facturas = null;
+    // this.user.roles = null;
     this.userService.create(this.user).subscribe(
       user => {
         this.router.navigate(['/users']),
@@ -79,13 +98,13 @@ export class FormUserComponent implements OnInit {
 
   update(): void {
     this.loadingService.abrirModal();
+    this.user.facturas = null;
     this.asignarDatosParaGuardar();
     console.log(this.user);
     this.userService.update(this.user)
     .subscribe(
       user => {
         this.router.navigate(['/users']),
-        // console.log(this.user),
         Swal.fire({
           type: 'success',
           title: `Usuario`,
@@ -160,6 +179,7 @@ export class FormUserComponent implements OnInit {
       ])],
       region: ['', Validators.required],
       fecha: ['', Validators.required],
+      roles: ['', Validators.required],
     });
   }
 
@@ -177,6 +197,8 @@ export class FormUserComponent implements OnInit {
       fecha: this.user.fecha,
       nick: this.user.username,
       password: this.user.password,
+      roles: this.rolDisplay,
+
     });
   }
 
@@ -197,6 +219,17 @@ export class FormUserComponent implements OnInit {
     }
     this.user.password = this.formularioCreado.value.password;
     this.user.username = this.formularioCreado.value.nick;
+    if ( this.formularioCreado.value.roles === 'ADMINISTRADOR' ) {
+      console.log('creara un admin');
+      let admin = new Array<any>();
+      admin = [ {id: 1, nombre:  'ROLE_USER'}, { id: 2, nombre:  'ROLE_ADMIN'}];
+      this.user.roles = admin;
+    } else {
+      console.log('creara un usuario');
+      let user = new Array<any>();
+      user = [ {id: 1, nombre:  'ROLE_USER'}];
+      this.user.roles = user;
+    }
   }
 
 }
