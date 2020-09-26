@@ -17,6 +17,7 @@ export class User {
   email: string;
   foto: string;
   region: Region;
+  enabled: boolean;
   roles: string [] = [];
   // sucursal: Sucursal;
   facturas: Array<Factura> = [];

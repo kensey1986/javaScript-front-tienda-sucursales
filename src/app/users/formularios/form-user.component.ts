@@ -29,6 +29,8 @@ export class FormUserComponent implements OnInit {
   formularioCreado: FormGroup;
   rolDisplay: string;
   rolSelect: string[];
+  estadoDisplay: string;
+  estadoSelect: string[];
 
   constructor(
     public  userService: UserService,
@@ -44,6 +46,7 @@ export class FormUserComponent implements OnInit {
     this.crearFormulario();
     this.cargarUser();
     this.rolSelect = ['ADMINISTRADOR', 'USUARIO'];
+    this.estadoSelect = ['ACTIVO', 'DESACTIVADO'];
     this.regionService.getRegionLista().subscribe(regiones => this.regiones = regiones);
   }
 
@@ -53,7 +56,8 @@ export class FormUserComponent implements OnInit {
         const id = params.id;
         if (id) {
           this.userService.getUser(id).subscribe(
-            user =>  {(this.user = user, this.roles = this.user.roles, this.tipoUsuarios(this.roles.length));
+            user =>  {(this.user = user, this.roles = this.user.roles, this.tipoUsuarios(this.roles.length),
+              this.estadoUsuarios(user.enabled) );
                       this.asignarDatosFormulario();
           });
         }
@@ -72,6 +76,16 @@ export class FormUserComponent implements OnInit {
     }
   }
 
+  estadoUsuarios(estado: boolean) {
+    if (estado === true) {
+      this.estadoDisplay = 'ACTIVO';
+      this.estadoSelect = ['ACTIVO', 'DESACTIVADO'];
+    } else {
+      this.rolDisplay = 'DESACTIVADO';
+      this.estadoSelect = ['DESACTIVADO', 'ACTIVO'];
+    }
+  }
+
   public create(): void {
     this.loadingService.abrirModal();
     this.asignarDatosParaGuardar();
@@ -79,12 +93,12 @@ export class FormUserComponent implements OnInit {
     this.user.facturas = null;
     // this.user.roles = null;
     this.userService.create(this.user).subscribe(
-      user => {
+      () => {
         this.router.navigate(['/users']),
         Swal.fire({
           type: 'success',
           title: `Nuevo Usuario`,
-          text: `${user.nombre}`,
+          text: `${this.user.nombre}`,
           footer: `Creado con Exito!`
         });
         this.loadingService.cerrarModal();
@@ -103,12 +117,12 @@ export class FormUserComponent implements OnInit {
     console.log(this.user);
     this.userService.update(this.user)
     .subscribe(
-      user => {
+      () => {
         this.router.navigate(['/users']),
         Swal.fire({
           type: 'success',
           title: `Usuario`,
-          text: `${user.nombre}`,
+          text: `${this.user.nombre}`,
           footer: `Actualizado con Exito!`
         });
         this.loadingService.cerrarModal();
@@ -180,6 +194,7 @@ export class FormUserComponent implements OnInit {
       region: ['', Validators.required],
       fecha: ['', Validators.required],
       roles: ['', Validators.required],
+      estado: ['', Validators.required],
     });
   }
 
@@ -198,6 +213,7 @@ export class FormUserComponent implements OnInit {
       nick: this.user.username,
       password: this.user.password,
       roles: this.rolDisplay,
+      estado: this.estadoDisplay,
 
     });
   }
@@ -211,6 +227,11 @@ export class FormUserComponent implements OnInit {
     this.user.direccion = this.formularioCreado.value.direccion,
     this.user.region = this.formularioCreado.value.region,
     this.user.fecha = this.formularioCreado.value.fecha;
+    if (this.formularioCreado.value.estado === 'ACTIVADO') {
+      this.user.enabled = true;
+    } else {
+      this.user.enabled = false;
+    }
     if ( this.formularioCreado.value.celular2 !== '' ) {
       this.user.celular2 = this.formularioCreado.value.celular2;
     }
