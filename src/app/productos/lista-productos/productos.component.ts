@@ -56,7 +56,7 @@ export class ProductosComponent implements OnInit {
 
   cargarListadoProductosCompleto() {
     this.productoService.getListadoProductos()
-    .subscribe(datosTabla => {this.dataSource.data = datosTabla;
+    .subscribe(datosTabla => {(this.dataSource.data = datosTabla, console.log(datosTabla));
                               if (datosTabla.length > 0 ) {
                                     this.activar = false;
                                     this.loadingService.cerrarModal();

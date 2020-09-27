@@ -1,0 +1,176 @@
+<app-loading *ngIf="loadingService.modal"></app-loading>
+<mat-card class="bg-light">
+  <mat-card-header>
+    <mat-card-title>
+      <strong>
+        {{ titulo }}
+      </strong>
+    </mat-card-title>
+    <mat-icon matSuffix>perm_identity</mat-icon>
+  </mat-card-header>
+  <mat-card-content class="bg-light">
+    <mat-card-subtitle>
+      <span class="my-1"> Los campos con (*) son requeridos. </span>
+      <mat-card *ngIf="errores?.length > 0">
+        <mat-card-content>
+          <ul class="alert alert-danger">
+            <li *ngFor="let err of errores">
+              {{ err }}
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-subtitle>
+    <form [formGroup]="formularioCreado">
+      <div class="row">
+        <!-- Columna izquierda -->
+        <div class="col-sm-6">
+          <div class="form-group row">
+            <div class="col-sm-8">
+              <mat-form-field appearance="fill" style="width: 100%">
+                <mat-label for="cantidad"> Cantidad </mat-label>
+                <input
+                  matInput
+                  required
+                  type="number"
+                  autocomplete="off"
+                  formControlName="cantidad"
+                  placeholder="Ej: juan pepito "
+                />
+                <mat-icon matSuffix>create</mat-icon>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  formularioCreado.controls['cantidad'].invalid &&
+                  (formularioCreado.controls['cantidad'].dirty ||
+                    formularioCreado.controls['cantidad'].touched)
+                "
+              >
+                <mat-error
+                  *ngIf="formularioCreado.controls['cantidad'].errors.required"
+                  role="alert"
+                >
+                Cantidad es requerido
+                </mat-error>
+              </mat-error>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-8">
+              <mat-form-field style="width: 100%">
+                <mat-label for="informacion">Digite Codigo o Nombre del Producto </mat-label>
+                <input
+                  type="text"
+                  aria-label="Productos"
+                  matInput
+                  [formControl]="autocompleteControl"
+                  [matAutocomplete]="auto"
+                />
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  [displayWith]="mostrarNombre"
+                  (optionSelected)="seleccionarProducto($event)"
+                >
+                  <mat-option
+                    *ngFor="let producto of productosFiltrados | async"
+                    [value]="producto"
+                  >
+                    <span style="font-size: 1rem" *ngIf="producto">
+                      {{ producto.codigo }} --
+                      {{ producto.nombre | uppercase }} --
+                      {{ formatNumber(producto.precio) }} --
+                    </span>
+                  </mat-option>
+                </mat-autocomplete>
+               
+              </mat-form-field>
+              
+             
+            </div>
+          </div>
+        </div>
+        <!-- fin columna izquierda -->
+        
+        <!-- columna derecha -->
+        <div class="col-sm-6">
+          <div class="form-group row">
+            <div class="col-sm-8">
+              <mat-form-field appearance="fill" style="width: 100%">
+                <mat-label for="direccion"> Sucursal </mat-label>
+                <mat-select
+                  formControlName="sucursal"
+                  required
+                  name="sucursal"
+                  style="width: 330px"
+                >
+                  <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal">
+                    {{ sucursal.nombre | uppercase }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matSuffix> location_on</mat-icon>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  formularioCreado.controls['sucursal'].invalid &&
+                  (formularioCreado.controls['sucursal'].dirty ||
+                    formularioCreado.controls['sucursal'].touched)
+                "
+              >
+                <mat-error
+                  *ngIf="formularioCreado.controls['sucursal'].errors.required"
+                  role="alert"
+                >
+                Sucursal es requerida
+                </mat-error>
+              </mat-error>
+            </div>
+          </div>
+          <div class="form-group row" *ngIf="codigo">
+            <div class="col-sm-8">
+              <mat-card >
+                <mat-card-title>
+                  <mat-label for="nombre">Producto </mat-label>
+                </mat-card-title>
+                <mat-card-content>
+                  <mat-card-subtitle>
+                    <mat-label for="nombre"> <strong>Codigo:</strong> </mat-label>
+                    <mat-label for="nombre"> {{codigo}} </mat-label>
+                  </mat-card-subtitle>
+                  <mat-card-subtitle>
+                    <mat-label for="nombre"> <strong>Nombre:</strong>  </mat-label>
+                    <mat-label for="nombre"> {{nombreProducto}} </mat-label>
+                  </mat-card-subtitle>
+                  
+                </mat-card-content>
+              
+              </mat-card>
+            </div>
+          </div>
+        </div>
+        <!--  fin columna derecha -->
+      </div>
+      <mat-card-footer class="bg-light ml-4">
+        <button
+          class="btn btn-rounded btn-primary btn-xs my-3"
+          role="button"
+          (click)="create()"
+          [disabled]="!formularioCreado.valid "
+          *ngIf="!bodega.id; else elseBlock"
+        >
+          Crear
+        </button>
+        <ng-template #elseBlock>
+          <button
+            class="btn btn-rounded btn-success btn-xs my-3"
+            role="button"
+            [disabled]="!formularioCreado.valid"
+            (click)="update()"
+          >
+            Actualizar
+          </button>
+        </ng-template>
+      </mat-card-footer>
+    </form>
+  </mat-card-content>
+</mat-card>
+

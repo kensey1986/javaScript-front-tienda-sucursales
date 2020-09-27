@@ -24,10 +24,10 @@
       <li class="nav-item" routerLinkActive='Active'>
         <a class="nav-link" routerLink="/reportes">Reportes</a>
       </li>
-      
-      <!-- <li class="nav-item" routerLinkActive='Active'>
-        <a class="nav-link" routerLink="/servicios">Servicios</a>
-      </li> -->
+      <li class="nav-item" routerLinkActive='Active'>
+        <a class="nav-link" routerLink="/bodegas"
+        *ngIf="authService.hasRole('ROLE_ADMIN')">Bodegas</a>
+      </li>
       <li class="nav-item" routerLinkActive='Active'>
         <a class="nav-link" routerLink="/users"
         *ngIf="authService.hasRole('ROLE_ADMIN')">Usuarios</a>

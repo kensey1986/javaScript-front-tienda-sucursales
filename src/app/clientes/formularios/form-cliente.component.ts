@@ -118,6 +118,7 @@ export class FormClienteComponent implements OnInit {
       }
     );
   }
+
   public compararRegion(o1: Region, o2: Region): boolean {
     if (o1 === undefined && o2 === undefined) {
       return true;

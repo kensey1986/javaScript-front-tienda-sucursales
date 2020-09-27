@@ -7,7 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { map, startWith, flatMap } from 'rxjs/operators';
+import { map,  flatMap } from 'rxjs/operators';
 import { FacturaService } from '../services/factura.service';
 import { ItemFactura } from '../interfaces/item-factura';
 import { MatAutocompleteSelectedEvent } from '@angular/material';

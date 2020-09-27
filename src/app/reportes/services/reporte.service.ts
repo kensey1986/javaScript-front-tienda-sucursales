@@ -62,7 +62,7 @@ export class ReporteService {
     return this.http.put<any>(
       `${this.urlEndPoint}/${reporte.id}`,
       reporte).pipe(
-        map((response: any ) => response.cliente as Reporte ),
+        map((response: any ) => response.reporte as Reporte ),
         catchError (e => {
 
           if (e.status === 400) {
@@ -81,7 +81,7 @@ export class ReporteService {
 
   createReporte(reporte: Reporte): Observable<Reporte> {
     return this.http.post(this.urlEndPoint, reporte).pipe(
-      map((response: any ) => response.Reporte as Reporte ),
+      map((response: any ) => response.reporte as Reporte ),
       catchError (e => {
         if (e.status === 400) {
           return throwError(e);
