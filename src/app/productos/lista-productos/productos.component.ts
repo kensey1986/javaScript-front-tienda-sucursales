@@ -1,7 +1,7 @@
 import {  Component, ViewChild, OnInit } from '@angular/core';
 import { Producto } from '../interfaces/producto';
 import { ProductoService } from '../services/producto.service';
-import { tap } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import Swal from 'sweetalert2';
 import { ActivatedRoute } from '@angular/router';
 import { ModalProductoService  } from '../services/modal-producto.service';
@@ -56,58 +56,25 @@ export class ProductosComponent implements OnInit {
 
   cargarListadoProductosCompleto() {
     this.productoService.getListadoProductos()
-    .subscribe(datosTabla => {(this.dataSource.data = datosTabla, console.log(datosTabla));
+    .subscribe(datosTabla => {(this.dataSource.data = datosTabla, this.filtrarProductosPorSucursal(datosTabla));
                               if (datosTabla.length > 0 ) {
                                     this.activar = false;
                                     this.loadingService.cerrarModal();
                                 }});
   }
 
-  delete(producto: Producto): void {
-    Swal.fire({
-      title: '¿ Estas Seguro ?',
-      text: `¿Seguro De Eliminar El Producto ${producto.nombre} ?`,
-      type: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, Eliminar Producto!'
-    }).then((result) => {
-      if (result.value) {
-          this.productoService.delete(producto.id).subscribe(
-            response => {
-              this.productos = this.productos.filter(cli => cli !== producto);
-              Swal.fire(
-                'Borrado!',
-                `Producto ${producto.nombre} eliminado con Exito.`,
-                'success'
-              );
-            }
-          );
-      }
-    });
-  }
-
-  cargarProductosConPagina() {
-    this.activatedRoute.paramMap.subscribe( params => {
-      let page: number = +params.get('page');
-      if (!page) {
-          page = 0;
-      }
-      this.productoService.getProductos(page)
-    .pipe(
-      tap( response => {
-        // console.log('ProductoComponent: tap 3');
-        (response.content as Producto[]).forEach(producto => {
-          this.loadingService.cerrarModal();
-        //  console.log(producto);
-        });
-      })
-    ).subscribe(response => {
-      this.productos = response.content as Producto[];
-      this.paginador = response;
-    });
-    });
+  filtrarProductosPorSucursal(listaProducto: any) {
+    console.log(listaProducto);
+    // this.factura.items = this.factura.items
+    // .filter((item: ItemFactura) => id !== item.producto.id);
+    const lista = {local : 'Bulevar'};
+    // const SUCURSAL =    JSON.parse(sessionStorage.getItem('sucursal')).nombre;
+    const productosFiltrados =  ( listaProducto.map( (producto) => (
+      // console.log(producto.bodegas)
+      console.log(Object.assign(lista, producto.bodegas))
+     )));
+    console.log(productosFiltrados);
+    // const productosFiltrados =  listaProducto.filter(sucursal => sucursal === 'Bulevar');
   }
 
   applyFilter(event: Event) {

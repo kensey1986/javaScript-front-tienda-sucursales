@@ -6,4 +6,7 @@ export class Bodega {
   cantidad: number;
   sucursal: Sucursal;
   producto: Producto;
+  fechaActualizacion: Date;
+  precioVenta: number;
+  precioCompra: number;
 }

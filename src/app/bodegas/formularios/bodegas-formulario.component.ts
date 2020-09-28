@@ -44,6 +44,7 @@ export class BodegasFormularioComponent implements OnInit {
   errores: string[];
   codigo: string;
   nombreProducto: string;
+  nombreSucursal: string;
   producto = new Producto();
   autocompleteControl = new FormControl();
   productosFiltrados: Observable<Producto[]>;
@@ -62,7 +63,7 @@ export class BodegasFormularioComponent implements OnInit {
   ngOnInit() {
     this.loadingService.abrirModal();
     this.crearFormulario();
-    this.cargarCliente();
+    this.cargarBodega();
     this.cargarListaSucursal();
     this.filtrarProductos();
   }
@@ -95,10 +96,6 @@ export class BodegasFormularioComponent implements OnInit {
     event.option.deselect();
   }
 
-  formatNumber(cantidad: number): string {
-    return this.funcionesService.formatNumber(cantidad);
- }
-
 
   // metodos del select autocomplete fin
 
@@ -109,7 +106,7 @@ export class BodegasFormularioComponent implements OnInit {
 
   }
 
-  cargarCliente(): void {
+  cargarBodega(): void {
     this.loadingService.abrirModal();
     this.activatedRoute.params.subscribe(
       params => {
@@ -118,7 +115,7 @@ export class BodegasFormularioComponent implements OnInit {
         if (id) {
             this.bodegaService.getBodegas(id).subscribe(
             (bodega) => {this.bodega = bodega, console.log(bodega),
-                          this.asignarDatosFormulario();
+                         this.asignarDatosFormulario();
             });
         }
       });
@@ -188,6 +185,14 @@ export class BodegasFormularioComponent implements OnInit {
       sucursal: ['', Validators.compose([
         Validators.required,
       ])],
+      precioVenta: ['', Validators.compose([
+        Validators.required,
+      ])],
+      precioCompra: ['', Validators.compose([
+        Validators.required,
+      ])],
+      crateAt: [''],
+      fechaActualizacion: [''],
     });
   }
 
@@ -195,15 +200,43 @@ export class BodegasFormularioComponent implements OnInit {
     this.formularioCreado.setValue({
       cantidad: this.bodega.cantidad,
       sucursal: this.bodega.sucursal,
+      precioCompra: this.bodega.precioCompra,
+      precioVenta: this.bodega.precioVenta,
+      crateAt: this.bodega.createAt,
+      fechaActualizacion: this.bodega.fechaActualizacion,
       // fecha: this.cliente.fecha,
     });
+    this.producto = this.bodega.producto,
+    this.codigo = this.bodega.producto.codigo,
+    this.nombreSucursal = this.bodega.sucursal.nombre;
+    this.nombreProducto = this.bodega.producto.nombre;
   }
 
   asignarDatosParaGuardar() {
     this.bodega.cantidad = this.formularioCreado.value.cantidad;
+    this.bodega.precioCompra = this.formularioCreado.value.precioCompra;
+    this.bodega.precioVenta = this.formularioCreado.value.precioVenta;
     this.bodega.sucursal = this.formularioCreado.value.sucursal;
     this.bodega.producto = this.producto;
   }
+
+  formatNumber(cantidad: number): string {
+    return this.funcionesService.formatNumber(cantidad);
+ }
+
+
+  calcularInversion(cantidad: number, precioCompra: number): string {
+    const inversion =  (cantidad * precioCompra);
+    const inversionFormat = inversion.toFixed(2);
+    return this.formatNumber(parseFloat(inversionFormat));
+  }
+
+  redondearPrecioCompra(precioCompra: number): string  {
+    const precio = precioCompra.toFixed(2);
+    return this.formatNumber(parseFloat(precio));
+  }
+
+
 
 }
 

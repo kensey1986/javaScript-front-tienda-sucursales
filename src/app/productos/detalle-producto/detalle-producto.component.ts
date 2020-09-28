@@ -117,7 +117,7 @@ export class DetalleProductoComponent implements OnInit {
 
   formatNumber(cantidad: number): string {
     return this.funcionesService.formatNumber(cantidad);
-}
+  }
   enviarProducto(id: number) {
     sessionStorage.setItem('idpro', id.toString());
   }

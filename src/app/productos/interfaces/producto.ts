@@ -5,14 +5,15 @@ export class Producto {
   descripcion: string;
   nombre: string;
   createAt: Date;
-  fechaVenta: Date;
-  precio: number;
-  precioCompra: number;
-  cantidad: number;
   foto: string;
   codigo: string;
+  cantidad: number;
+  precio: number;
+  precioCompra: number;
+  fechaVenta: Date;
   reportes: Array<Reporte> = [];
   bodegas: Array<Bodega> = [];
+  sucursal: string;
 }
 
 
