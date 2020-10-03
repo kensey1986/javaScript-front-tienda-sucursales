@@ -12,8 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-detalle-producto',
-  templateUrl: './detalle-producto.component.html',
-  styleUrls: ['../../generales/css/modal.css']
+  templateUrl: './detalle-producto.component.html'
 })
 export class DetalleProductoComponent implements OnInit {
 

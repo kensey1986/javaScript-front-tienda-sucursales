@@ -121,15 +121,15 @@
                     *ngFor="let producto of productosFiltrados | async"
                     [value]="producto"
                   >
-                    <span *ngIf="producto.cantidad <= 0">
+                    <!-- <span *ngIf="producto.cantidad <= 0">
                       <span class="alert-danger mr-1" style="font-size: 1rem">
                         --NO HAY STOCK DISPONIBLE-- --{{ producto.codigo }} --
                         --{{ producto.nombre | uppercase }}-- --{{
                           formatNumber(producto.precio)
                         }}--
                       </span>
-                    </span>
-                    <span style="font-size: 1rem" *ngIf="producto.cantidad > 0">
+                    </span> -->
+                    <span style="font-size: 1rem" >
                       {{ producto.codigo }} --
                       {{ producto.nombre | uppercase }} --
                       {{ formatNumber(producto.precio) }} --

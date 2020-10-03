@@ -135,42 +135,21 @@
       </ng-container>
 
       <!-- Name Column -->
-      <ng-container matColumnDef="precio">
+      <ng-container matColumnDef="descripcion">
         <th
-          mat-sort-header
+         
           style="text-align: left"
           mat-header-cell
           *matHeaderCellDef
         >
-          <strong> Precio </strong>
+          <strong> Descripcion </strong>
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
-          {{ formatNumber(element.precio) }}
+          {{ formatNumber(element.descripcion) }}
         </td>
       </ng-container>
 
       <!-- Name Column -->
-      <ng-container matColumnDef="cantidad">
-        <th
-          mat-sort-header
-          style="text-align: left"
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          <strong> Stock </strong>
-        </th>
-        <td style="text-align: left" mat-cell *matCellDef="let element">
-          <span style="font-size: 15px" *ngIf="element.cantidad <= 3">
-            <strong class="badge badge-danger">
-              {{ element.cantidad }}
-            </strong>
-          </span>
-          <span *ngIf="element.cantidad > 3">
-            {{ element.cantidad }}
-          </span>
-        </td>
-      </ng-container>
-
       <ng-container matColumnDef="createAt">
         <th
           mat-sort-header
@@ -182,20 +161,6 @@
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
           {{ element.createAt | date: "EEEE dd, MMMM yyyy" }}
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="fechaVenta">
-        <th
-          mat-sort-header
-          style="text-align: left"
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          <strong> Fecha ultimo Movimiento del Stock </strong>
-        </th>
-        <td style="text-align: left" mat-cell *matCellDef="let element">
-          {{ element.fechaVenta | date: "EEEE dd, MMMM yyyy" }}
         </td>
       </ng-container>
 

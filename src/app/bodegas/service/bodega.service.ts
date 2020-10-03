@@ -15,7 +15,7 @@ import Swal from 'sweetalert2';
 })
 
 export class BodegaService {
-
+  public   bodegaTmp: Bodega;
   public  urlEndPoint: string;
 
   constructor(
@@ -94,11 +94,13 @@ export class BodegaService {
         })
       );
   }
+
   create(bodega: Bodega): Observable<Bodega> {
     return this.http.post<Bodega>(this.urlEndPoint, bodega);
   }
 
   createBodega(bodega: Bodega): Observable<Bodega> {
+    this.bodegaTmp = bodega;
     return this.http.post(this.urlEndPoint, bodega).pipe(
       map((response: any ) => response.bodega as Bodega ),
       catchError((e) => {
@@ -110,8 +112,8 @@ export class BodegaService {
           const tmp = prueba.split(`'`);
           Swal.fire({
             type: 'error',
-            title: `${tmp[1]}`,
-            text: `Ya existe un registro Con este dato`,
+            title: `Producto "${this.bodegaTmp.producto.nombre}",  ya cuenta con una "Bodega"`,
+            text: `En la sucursal "${this.bodegaTmp.sucursal.nombre}"`,
           });
         }
         return throwError(e);

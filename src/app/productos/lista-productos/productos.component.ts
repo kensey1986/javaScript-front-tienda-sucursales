@@ -22,7 +22,7 @@ export class ProductosComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  displayedColumns: string[] = ['id', 'codigo', 'nombre', 'precio', 'cantidad', 'createAt', 'fechaVenta' ];
+  displayedColumns: string[] = ['id', 'codigo', 'nombre',   'descripcion', 'createAt'  ];
   dataSource = new MatTableDataSource();
 
   activar = true;
@@ -64,16 +64,8 @@ export class ProductosComponent implements OnInit {
   }
 
   filtrarProductosPorSucursal(listaProducto: any) {
+    console.log('mostrara listado de productos');
     console.log(listaProducto);
-    // this.factura.items = this.factura.items
-    // .filter((item: ItemFactura) => id !== item.producto.id);
-    const lista = {local : 'Bulevar'};
-    // const SUCURSAL =    JSON.parse(sessionStorage.getItem('sucursal')).nombre;
-    const productosFiltrados =  ( listaProducto.map( (producto) => (
-      // console.log(producto.bodegas)
-      console.log(Object.assign(lista, producto.bodegas))
-     )));
-    console.log(productosFiltrados);
     // const productosFiltrados =  listaProducto.filter(sucursal => sucursal === 'Bulevar');
   }
 

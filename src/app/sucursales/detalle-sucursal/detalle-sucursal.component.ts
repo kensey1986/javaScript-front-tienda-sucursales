@@ -35,7 +35,7 @@ export class DetalleSucursalComponent implements OnInit  {
       const id = +params.get('id');
       this.sucursalService.getSucursal(id)
       .subscribe(
-        sucursal => {this.sucursal = sucursal,
+        sucursal => {(this.sucursal = sucursal, console.log(this.sucursal.facturas.length));
                      this.loadingService.cerrarModal();
         });
     });

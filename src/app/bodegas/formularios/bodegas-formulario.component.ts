@@ -3,7 +3,7 @@ import { Producto } from './../../productos/interfaces/producto';
 import { ProductoService } from './../../productos/services/producto.service';
 import { Sucursal } from './../../sucursales/interfaces/sucursal';
 import { SucursalService } from './../../sucursales/services/sucursal.service';
-import { BodegaService } from './../servicios/bodega.service';
+import { BodegaService } from './../service/bodega.service';
 import { Bodega } from './../models/bodega';
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
@@ -28,8 +28,7 @@ export class MyErrorStateMatcher implements ErrorStateMatcher {
 }
 @Component({
   selector: 'app-bodegas-formulario',
-  templateUrl: './bodegas-formulario.component.html',
-  styleUrls: ['./bodegas-formulario.component.css']
+  templateUrl: './bodegas-formulario.component.html'
 })
 
 
@@ -48,6 +47,10 @@ export class BodegasFormularioComponent implements OnInit {
   producto = new Producto();
   autocompleteControl = new FormControl();
   productosFiltrados: Observable<Producto[]>;
+  preCantidad: number;
+  prePcompra: number;
+  prePventa: number;
+  actualizando = false;
 
   constructor(
               public  bodegaService: BodegaService,
@@ -100,9 +103,8 @@ export class BodegasFormularioComponent implements OnInit {
   // metodos del select autocomplete fin
 
   cargarListaSucursal() {
-    console.log('entro a sucursales');
     this.sucursalService.getSucursalLista()
-    .subscribe(sucursales => (this.sucursales = sucursales, console.log(sucursales)));
+    .subscribe(sucursales => (this.sucursales = sucursales));
 
   }
 
@@ -111,10 +113,9 @@ export class BodegasFormularioComponent implements OnInit {
     this.activatedRoute.params.subscribe(
       params => {
         const id = params.id;
-        console.log(id);
         if (id) {
             this.bodegaService.getBodegas(id).subscribe(
-            (bodega) => {this.bodega = bodega, console.log(bodega),
+            (bodega) => {(this.bodega = bodega, this.actualizando = true);
                          this.asignarDatosFormulario();
             });
         }
@@ -125,71 +126,75 @@ export class BodegasFormularioComponent implements OnInit {
 
   public create(): void {
     this.loadingService.abrirModal();
-    this.asignarDatosParaGuardar();
-    this.bodegaService.create(this.bodega).subscribe(
-      () => {
-         this.router.navigate(['/bodegas']),
-         Swal.fire({
-           type: 'success',
-           title: 'Nueva Bodega',
-           text: `${this.bodega.cantidad} `,
-           footer: 'Creado con Exito!',
-           });
-         this.loadingService.cerrarModal();
-       },
-       err => {
-         this.errores = err.error.errors as string[];
-         this.loadingService.cerrarModal();
-         console.error(err);
-       }
-     );
+    if (this.validarDatos() === true) {
+      this.asignarDatosParaGuardar();
+      if (this.asignarDatosParaGuardar()) {
+        this.bodegaService.createBodega(this.bodega).subscribe(
+          () => {
+             this.router.navigate(['/bodegas']),
+             Swal.fire({
+               type: 'success',
+               title: `Bodega Creada`,
+               text: `Producto "${this.bodega.producto.nombre}", Asignado a la Sucursal "${this.bodega.sucursal.nombre}" `,
+               footer: 'Con Exito!',
+               });
+             this.loadingService.cerrarModal();
+           },
+           err => {
+             this.errores = err.error.errors as string[];
+             this.loadingService.cerrarModal();
+             console.error(err);
+           }
+         );
+      }
+    }
+    this.loadingService.cerrarModal();
   }
 
   update(): void {
     this.loadingService.abrirModal();
+    if (this.validarDatos()) {
     this.asignarDatosParaGuardar();
-    // this.cliente.facturas = null;
-    this.bodegaService.update(this.bodega)
-    .subscribe(
-      bodega => {
-        this.router.navigate(['/bodegas']),
-        Swal.fire({
-          type: 'success',
-          title: 'Bodega',
-          text: `${bodega.id} `,
-          footer: 'Actualizado con Exito!',
-          });
-        this.loadingService.cerrarModal();
-      },
-      err => {
-        this.errores = err.error.errors as string[];
-        Swal.fire({
-          type: 'error',
-          title: `El documento '${this.bodega.id}' `,
-          text: `ya esta se encuentra registrado`,
-          footer: 'Intente de nuevo',
-          });
-        this.loadingService.cerrarModal();
-        console.error(err);
-      }
+    if (this.asignarDatosParaGuardar()) {
+      this.validarDatosParaActualizar();
+      this.bodegaService.update(this.bodega)
+      .subscribe(
+        () => {
+          this.router.navigate(['/bodegas']),
+          Swal.fire({
+            type: 'success',
+            title: `Bodega Actualizada`,
+            text: `Bodega con Producto "${this.bodega.producto.nombre}" y Sucursal "${this.bodega.sucursal.nombre}" `,
+            footer: `Actualizada con Exito!`,
+            });
+          this.loadingService.cerrarModal();
+        },
+        err => {
+          this.errores = err.error.errors as string[];
+          this.loadingService.cerrarModal();
+          console.error(err);
+        }
     );
+    }
+  }
+    this.loadingService.cerrarModal();
   }
 
 
   // tratamiento a formulario
   crearFormulario() {
     this.formularioCreado = this.formBuilder.group({
-      cantidad: ['', Validators.compose([
-        Validators.required,
+      cantidad: [0, Validators.compose([
+        Validators.required, Validators.min(0)
       ])],
       sucursal: ['', Validators.compose([
         Validators.required,
       ])],
-      precioVenta: ['', Validators.compose([
-        Validators.required,
+      precioVenta: [0, Validators.compose([
+        Validators.required, Validators.min(0)
       ])],
-      precioCompra: ['', Validators.compose([
-        Validators.required,
+      precioCompra: [0, Validators.compose([
+        Validators.required, Validators.min(0)
       ])],
       crateAt: [''],
       fechaActualizacion: [''],
@@ -210,14 +215,44 @@ export class BodegasFormularioComponent implements OnInit {
     this.codigo = this.bodega.producto.codigo,
     this.nombreSucursal = this.bodega.sucursal.nombre;
     this.nombreProducto = this.bodega.producto.nombre;
+    this.preCantidad = this.bodega.cantidad;
+    this.prePcompra = this.bodega.precioCompra;
+    this.prePventa = this.prePventa;
   }
 
-  asignarDatosParaGuardar() {
+  asignarDatosParaGuardar(): boolean {
     this.bodega.cantidad = this.formularioCreado.value.cantidad;
     this.bodega.precioCompra = this.formularioCreado.value.precioCompra;
     this.bodega.precioVenta = this.formularioCreado.value.precioVenta;
     this.bodega.sucursal = this.formularioCreado.value.sucursal;
     this.bodega.producto = this.producto;
+    this.bodega.nombre = this.formularioCreado.value.sucursal.nombre;
+    if (this.bodega.producto.id === undefined || this.bodega.producto.id === null) {
+      Swal.fire({
+        type: 'error',
+        title: `No ha seleccionado un "producto"`,
+        text: ` Debe seleccionar un "Poducto para asignar a esta bodega`,
+        footer: 'Intente de nuevo',
+        });
+      return false;
+    }
+    const idProducto = this.bodega.producto.id.toString();
+    const idSucursal = this.bodega.sucursal.id.toString();
+    if (idProducto !== null && idProducto !== undefined ) {
+      if (idSucursal !== null && idSucursal !== undefined ) {
+          this.bodega.idCompuesto = (idSucursal + idProducto);
+          console.log(this.bodega.id);
+      } else {
+        console.error('Id sucursal ERROR formulario Bodega');
+      }
+    } else {
+      console.error('Id producto ERROR formulario Bodega');
+    }
+    this.bodega.producto.bodegas = null;
+    this.bodega.producto.reportes = null;
+    this.bodega.sucursal.bodegas = null;
+    this.bodega.sucursal.facturas = null;
+    return true;
   }
 
   formatNumber(cantidad: number): string {
@@ -231,12 +266,71 @@ export class BodegasFormularioComponent implements OnInit {
     return this.formatNumber(parseFloat(inversionFormat));
   }
 
-  redondearPrecioCompra(precioCompra: number): string  {
-    const precio = precioCompra.toFixed(2);
-    return this.formatNumber(parseFloat(precio));
+  redondearPrecioCompra(precioCompra: number): number  {
+    const precio = parseFloat(precioCompra.toFixed(2));
+    return precio;
   }
 
+  validarPositivos(campo: string, event: any): number {
+    const cantidad: number = event.target.value as number;
+    if (this.actualizando === false ) {
+      if (cantidad < 0) {
+        Swal.fire({
+          type: 'error',
+          title: `${cantidad}`,
+          text: `Es un valor no valido para "${campo}"`,
+          footer: 'Intente de nuevo',
+          });
+        return event.target.value = 0;
+      }
+    } else {
+      if (cantidad < this.preCantidad) {
+        Swal.fire({
+          type: 'error',
+          title: `Accion No Permitida!`,
+          text: `Cantidad en el stock "${this.preCantidad}", aqui Solo puede aumentar el stock`,
+          footer: 'Si desea retirar productos del inventario use la Seccion de  "Reportes"',
+          });
+        return event.target.value = this.preCantidad;
+      }
+    }
 
+  }
 
+  // recalculamos el valor de cada producto si es modificado
+  validarDatos(): boolean {
+    const tmpPCompra = this.formularioCreado.value.precioCompra;
+    const tmpPVenta = this.formularioCreado.value.precioVenta;
+    if ( this.formularioCreado.value.precioCompra > this.formularioCreado.value.precioVenta ) {
+      Swal.fire({
+        type: 'error',
+        title: `Valores No Permitidos`,
+        text: `V.venta "${this.formatNumber(tmpPVenta)}" No Puede ser Menor a V.compra "${this.formatNumber(tmpPCompra)}"`,
+        footer: 'Intente de nuevo',
+        });
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  validarDatosParaActualizar() {
+    const tmpPCompra = this.formularioCreado.value.precioCompra;
+    const tmpCantidad = this.formularioCreado.value.cantidad;
+    if (this.prePcompra !== tmpPCompra && this.preCantidad !== tmpCantidad) {
+          const diferenciaDeCantidad = tmpCantidad - this.preCantidad;
+          console.log('1. cant nueva ingresada ' + tmpCantidad );
+          const inversionAnterior = this.prePcompra * this.preCantidad;
+          console.log('2. inversion previa ' + inversionAnterior);
+          const inversionActual = tmpPCompra * diferenciaDeCantidad;
+          console.log('3. inversion nueva ' + inversionActual);
+          const inversionTotal = inversionAnterior + inversionActual;
+          console.log('4. inversion nueva ' + inversionTotal);
+          const nuevoCostoUnidad = ( inversionTotal / (tmpCantidad));
+          console.log('4. Nuevo costo ' + nuevoCostoUnidad);
+          this.bodega.precioCompra = this.redondearPrecioCompra(nuevoCostoUnidad);
+          console.log('4. Nuevo costo formateado' + this.bodega.precioCompra);
+    }
+  }
 }
 

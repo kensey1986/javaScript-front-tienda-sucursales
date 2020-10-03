@@ -1,5 +1,5 @@
 import { Bodega } from './../models/bodega';
-import { BodegaService } from './../servicios/bodega.service';
+import { BodegaService } from './../service/bodega.service';
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { tap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -14,15 +14,14 @@ import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-bodegas-lista',
-  templateUrl: './bodegas-lista.component.html',
-  styleUrls: ['./bodegas-lista.component.css']
+  templateUrl: './bodegas-lista.component.html'
 })
 
 export class BodegasListaComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  displayedColumns: string[] = ['id',  'cantidad', 'producto', 'sucursal', 'createAt', 'editar'  ];
+  displayedColumns: string[] = ['id',  'cantidad', 'producto', 'nombre', 'createAt', 'editar'  ];
   dataSource = new MatTableDataSource();
   activar = true;
 

@@ -10,7 +10,6 @@ export class Producto {
   cantidad: number;
   precio: number;
   precioCompra: number;
-  fechaVenta: Date;
   reportes: Array<Reporte> = [];
   bodegas: Array<Bodega> = [];
   sucursal: string;

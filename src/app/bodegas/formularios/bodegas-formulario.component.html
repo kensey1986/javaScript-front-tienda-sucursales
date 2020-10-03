@@ -26,7 +26,7 @@
         <!-- Columna izquierda -->
         <div class="col-sm-6">
           <div class="form-group row" *ngIf="bodega.id">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <mat-card>
                 <mat-card-title>
                   <mat-label for="sucursalTitulo"> Sucursal: </mat-label>
@@ -42,7 +42,7 @@
             </div>
           </div>
           <div class="form-group row" *ngIf="!bodega.id">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <mat-form-field style="width: 100%">
                 <mat-label for="informacion"
                   >Digite Codigo o Nombre del Producto
@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="form-group row" *ngIf="!bodega.id">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <mat-form-field appearance="fill" style="width: 100%">
                 <mat-label for="direccion"> Sucursal </mat-label>
                 <mat-select
@@ -109,49 +109,31 @@
             </div>
           </div>
 
+         
           <div class="form-group row">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <mat-form-field appearance="fill" style="width: 100%">
-                <mat-label for="cantidad"> Cantidad </mat-label>
-                <input
-                  matInput
-                  required
-                  type="number"
-                  autocomplete="off"
-                  formControlName="cantidad"
-                  placeholder="Ej: juan pepito "
-                />
-                <mat-icon matSuffix>create</mat-icon>
-              </mat-form-field>
-              <mat-error
-                *ngIf="
-                  formularioCreado.controls['cantidad'].invalid &&
-                  (formularioCreado.controls['cantidad'].dirty ||
-                    formularioCreado.controls['cantidad'].touched)
-                "
-              >
-                <mat-error
-                  *ngIf="formularioCreado.controls['cantidad'].errors.required"
-                  role="alert"
-                >
-                  Cantidad es requerido
-                </mat-error>
-              </mat-error>
-            </div>
-          </div>
-          <div class="form-group row">
-            <div class="col-sm-8">
-              <mat-form-field appearance="fill" style="width: 100%">
-                <mat-label for="precioCompra"> precioCompra </mat-label>
+                <mat-label for="precioCompra"> Precio Compra </mat-label>
                 <input
                   matInput
                   required
                   type="number"
                   autocomplete="off"
                   formControlName="precioCompra"
-                  placeholder="Ej: juan pepito "
+                  (change)="validarPositivos('Precio Compra', $event)"
                 />
                 <mat-icon matSuffix>create</mat-icon>
+                <mat-hint
+                  *ngIf="formularioCreado.controls['precioCompra'].value > 0"
+                  align="start"
+                  ><strong>
+                    {{
+                      formatNumber(
+                        formularioCreado.controls["precioCompra"].value
+                      )
+                    }}
+                  </strong>
+                </mat-hint>
               </mat-form-field>
               <mat-error
                 *ngIf="
@@ -171,6 +153,49 @@
               </mat-error>
             </div>
           </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <mat-form-field appearance="fill" style="width: 100%">
+                <mat-label for="precioVenta"> Precio Venta </mat-label>
+                <input
+                  matInput
+                  required
+                  type="number"
+                  autocomplete="off"
+                  formControlName="precioVenta"
+                  (change)="validarPositivos('Precio Venta', $event)"
+                />
+                <mat-icon matSuffix>create</mat-icon>
+                <mat-hint
+                  *ngIf="formularioCreado.controls['precioVenta'].value > 0"
+                  align="start"
+                  ><strong>
+                    {{
+                      formatNumber(
+                        formularioCreado.controls["precioVenta"].value
+                      )
+                    }}
+                  </strong>
+                </mat-hint>
+              </mat-form-field>
+              <mat-error
+                *ngIf="
+                  formularioCreado.controls['precioVenta'].invalid &&
+                  (formularioCreado.controls['precioVenta'].dirty ||
+                    formularioCreado.controls['precioVenta'].touched)
+                "
+              >
+                <mat-error
+                  *ngIf="
+                    formularioCreado.controls['precioVenta'].errors.required
+                  "
+                  role="alert"
+                >
+                  Cantidad es requerido
+                </mat-error>
+              </mat-error>
+            </div>
+          </div>
         </div>
         <!-- fin columna izquierda -->
 
@@ -178,7 +203,7 @@
 
         <div class="col-sm-6">
           <div class="form-group row" *ngIf="codigo">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <mat-card>
                 <mat-card-title>
                   <mat-label for="nombre">Producto </mat-label>
@@ -201,30 +226,28 @@
             </div>
           </div>
           <div class="form-group row">
-            <div class="col-sm-8">
+            <div class="col-sm-6">
               <mat-form-field appearance="fill" style="width: 100%">
-                <mat-label for="precioVenta"> precioVenta </mat-label>
+                <mat-label for="cantidad"> Cantidad De Productos </mat-label>
                 <input
                   matInput
                   required
                   type="number"
                   autocomplete="off"
-                  formControlName="precioVenta"
-                  placeholder="Ej: juan pepito "
+                  formControlName="cantidad"
+                  (change)="validarPositivos('Cantidad', $event)"
                 />
                 <mat-icon matSuffix>create</mat-icon>
               </mat-form-field>
               <mat-error
                 *ngIf="
-                  formularioCreado.controls['precioVenta'].invalid &&
-                  (formularioCreado.controls['precioVenta'].dirty ||
-                    formularioCreado.controls['precioVenta'].touched)
+                  formularioCreado.controls['cantidad'].invalid &&
+                  (formularioCreado.controls['cantidad'].dirty ||
+                    formularioCreado.controls['cantidad'].touched)
                 "
               >
                 <mat-error
-                  *ngIf="
-                    formularioCreado.controls['precioVenta'].errors.required
-                  "
+                  *ngIf="formularioCreado.controls['cantidad'].errors.required"
                   role="alert"
                 >
                   Cantidad es requerido
@@ -232,30 +255,47 @@
               </mat-error>
             </div>
           </div>
+          
         </div>
         <!--  fin columna derecha -->
       </div>
-      <mat-card-footer class="bg-light ml-4">
-        <button
-          class="btn btn-rounded btn-primary btn-xs my-3"
-          role="button"
-          (click)="create()"
-          [disabled]="!formularioCreado.valid"
-          *ngIf="!bodega.id; else elseBlock"
-        >
-          Crear
-        </button>
-        <ng-template #elseBlock>
+      <mat-card-content class="bg-light">
+        <mat-card-actions class="text-white ">
           <button
-            class="btn btn-rounded btn-success btn-xs my-3"
-            role="button"
+            mat-raised-button
+            type="button"
+            class="btn  btn-rounded btn-outline-dark btn-xs"
+            (click)="create()"
             [disabled]="!formularioCreado.valid"
-            (click)="update()"
+            *ngIf="!bodega.id; else elseBlock"
           >
-            Actualizar
+            <strong *ngIf="!formularioCreado.valid"> Crear </strong>
+            <span *ngIf="formularioCreado.valid"> Crear </span>
           </button>
-        </ng-template>
-      </mat-card-footer>
+          <ng-template #elseBlock>
+            <button
+              mat-raised-button
+              type="button"
+              class="btn  btn-rounded btn-outline-dark btn-xs"
+              [disabled]="!formularioCreado.valid"
+              (click)="update()"
+            >
+              <strong *ngIf="!formularioCreado.valid"> Actualizar </strong>
+              <span *ngIf="formularioCreado.valid"> Actualizar </span>
+            </button>
+          </ng-template>
+          <mat-card-footer>
+            <mat-hint
+              class="ml-3"
+              style="font-size: 12px"
+              *ngIf="!formularioCreado.valid"
+              align="start"
+            >
+              El Boton Se "Habilitara" al llenar  el Formulario
+            </mat-hint>
+          </mat-card-footer>
+        </mat-card-actions>
+      </mat-card-content>
     </form>
   </mat-card-content>
 </mat-card>

@@ -1,3 +1,5 @@
+import { BodegaService } from './../../bodegas/service/bodega.service';
+import { Bodega } from './../../bodegas/models/bodega';
 import { SucursalService } from './../../sucursales/services/sucursal.service';
 import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
 import { Component, OnInit } from '@angular/core';
@@ -30,29 +32,33 @@ export class FacturasComponent implements OnInit {
   products = Producto;
   factura: Factura = new Factura();
   errores: string[];
+  bodegaLocal: Bodega[];
   checked = false;
   sucursal: Sucursal;
   numeroFactura: number;
   estadoNumero = false;
   activar = false;
   autocompleteControl = new FormControl();
+  sucursalActiva: string;
 
   productosFiltrados: Observable<Producto[]>;
 
   constructor(
               public  clienteService: ClienteService,
-              public sucursalService: SucursalService,
+              public  bodegaService: BodegaService,
+              public  sucursalService: SucursalService,
               public  userService: UserService,
               public  facturaService: FacturaService,
               public  productoService: ProductoService,
-              public authService: AuthService,
+              public  authService: AuthService,
               public  router: Router,
               public  activatedRoute: ActivatedRoute,
-              public funcionesService: FuncionesService,
-              public loadingService: LoadingService
+              public  funcionesService: FuncionesService,
+              public  loadingService: LoadingService
               ) { }
 
   ngOnInit() {
+    this.sucursalActiva =   JSON.parse(sessionStorage.getItem('sucursal')).nombre;
     this.loadingService.abrirModal();
     this.titulo = `${this.funcionesService.setTitulo()} - Nueva Factura -`;
     this.activatedRoute.paramMap.subscribe(params => {
@@ -110,17 +116,41 @@ export class FacturasComponent implements OnInit {
 
   seleccionarProducto(event: MatAutocompleteSelectedEvent): void {
     const producto = event.option.value as Producto;
-    if (this.existeItem(producto.id)) {
-      this.incrementaCantidad(producto.id);
+    const sucursalFacturacion = this.factura.sucursal.nombre;
+    this.bodegaLocal = producto.bodegas.filter( sucursal => sucursal.nombre === sucursalFacturacion);
+    if (this.bodegaLocal.length <= 0 ) {
+      Swal.fire({
+        type: 'info',
+        title: `${producto.nombre}!`,
+        text: `No Disponible en  esta Sucursal "${this.sucursalActiva}"`,
+        footer: 'Intente de nuevo',
+        });
     } else {
-      const nuevoItem = new ItemFactura();
-      nuevoItem.producto = producto;
-      if (producto.cantidad > 0) {
-        this.factura.items.push(nuevoItem);
-        // guarda en el localStore
+      // saco la cantidad, precio de compra y de venta de la bodega y lo asigno al producto Inicio
+      const cantidadTmp = (
+        this.bodegaLocal.map( data => data.cantidad )
+      );
+      producto.cantidad = (cantidadTmp[0]);
+      const precioTmp = (
+        this.bodegaLocal.map( data => data.precioVenta )
+      );
+      producto.precio = (precioTmp[0]);
+      const precioCompraTmp = (
+        this.bodegaLocal.map( data => data.precioCompra )
+      );
+      producto.precioCompra = (precioCompraTmp[0]);
+       // saco la cantidad, precio de compra y de venta de la bodega y lo asigno al producto fin
+      if (this.existeItem(producto.id)) {
+        this.incrementaCantidad(producto.id);
+      } else {
+        const nuevoItem = new ItemFactura();
+        nuevoItem.producto = producto;
+        if (producto.cantidad > 0) {
+          this.factura.items.push(nuevoItem);
+          // guarda en el localStore
+        }
       }
     }
-
     this.autocompleteControl.setValue('');
     event.option.focus();
     event.option.deselect();
@@ -196,11 +226,22 @@ export class FacturasComponent implements OnInit {
       this.facturaService.create(this.factura).subscribe(factura => {
         this.factura.items.forEach((item: ItemFactura) => {
           item.producto.cantidad = item.producto.cantidad - item.cantidad;
-          item.producto.fechaVenta = new Date ();
-          this.productoService.update(item.producto)
+          console.log('cantidad');
+          console.log(item.producto.cantidad);
+          // item.producto.fechaVenta = new Date ();
+          console.log('mostara el item producto');
+          console.log(item.producto);
+          const bodegaActualizar = item.producto.bodegas[0];
+          console.log('mostrara la bodega');
+          console.log(bodegaActualizar);
+          bodegaActualizar.sucursal = null;
+          bodegaActualizar.cantidad = item.producto.cantidad;
+          this.bodegaService.update(bodegaActualizar)
           .subscribe(
             () => {
+              console.log('numero factura :  ' + this.sucursal.numeroFactura);
               this.sucursal.numeroFactura = this.factura.numeroFactura;
+              console.log('enviara sucursal :  ' + this.sucursal);
               this.sucursalService.update(this.sucursal)
               .subscribe(
                 () => {
