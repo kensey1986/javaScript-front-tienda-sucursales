@@ -58,26 +58,25 @@
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
           <button
-            [routerLink]="['/productos/details', element.producto.id]"
+            [routerLink]="['/productos/details', element.bodega.producto.id]"
             mat-button
           >
-            {{ element.producto.nombre }}
+            {{ element.bodega.producto.nombre | uppercase }}
           </button>
         </td>
       </ng-container>
-
       <!-- Name Column -->
-      <ng-container matColumnDef="id">
+      <ng-container matColumnDef="usuario">
         <th
           mat-sort-header
           style="text-align: left"
           mat-header-cell
           *matHeaderCellDef
         >
-          <strong> Reporte N° </strong>
+          <strong> Creado Por </strong>
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
-          {{ element.id }}
+          {{ element.usuario.nombre | uppercase }}
         </td>
       </ng-container>
 
@@ -95,7 +94,7 @@
           {{ element.nombre | uppercase }}
         </td>
       </ng-container>
-
+       <!-- Name Column -->
       <ng-container matColumnDef="createAt">
         <th
           mat-sort-header
@@ -144,7 +143,7 @@
       <!-- Row shown when there is no matching data. -->
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">
-          No se encontraron datos con: "{{ input.value }}"
+          No se encontraron datos
         </td>
       </tr>
     </table>

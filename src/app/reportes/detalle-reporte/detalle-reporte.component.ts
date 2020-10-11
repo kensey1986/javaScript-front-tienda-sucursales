@@ -19,6 +19,7 @@ import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
 export class DetalleReporteComponent implements OnInit {
   reporte: Reporte;
   titulo = 'Reporte Nº: ';
+  subtitulo = 'algo';
   // jsPDF: any;
   sucursal: Sucursal = new Sucursal();
   constructor(
@@ -38,6 +39,10 @@ export class DetalleReporteComponent implements OnInit {
       });
     });
     this.cargarSucursal();
+  }
+
+  formatNumber(cantidad: number): string {
+    return this.funcionesService.formatNumber(cantidad);
   }
 
   cargarSucursal() {

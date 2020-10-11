@@ -21,7 +21,7 @@ export class BodegasListaComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  displayedColumns: string[] = ['id',  'cantidad', 'producto', 'nombre', 'createAt', 'editar'  ];
+  displayedColumns: string[] = ['id',  'cantidad', 'producto', 'nombre', 'precioCompra', 'precioVenta', 'createAt', 'editar'  ];
   dataSource = new MatTableDataSource();
   activar = true;
 

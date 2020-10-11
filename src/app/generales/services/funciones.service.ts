@@ -2,14 +2,13 @@ import { LoadingService } from './loading.service';
 import { Sucursal } from './../../sucursales/interfaces/sucursal';
 import { Injectable } from '@angular/core';
 import Swal from 'sweetalert2';
-import { URL_BACKEND } from '../../config/config';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FuncionesService {
 
- public  urlBase = 'http://localhost:8080/';
+ public  urlBase = 'http://192.168.43.2:8080/';
  // public urlBase = 'https://sifi-api-rest-java.herokuapp.com/';
 
   constructor(

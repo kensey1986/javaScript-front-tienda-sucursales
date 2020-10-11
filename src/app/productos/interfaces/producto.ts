@@ -1,5 +1,4 @@
 import { Bodega } from './../../bodegas/models/bodega';
-import { Reporte } from './../../reportes/interfaces/reporte';
 export class Producto {
   id: number;
   descripcion: string;
@@ -10,7 +9,6 @@ export class Producto {
   cantidad: number;
   precio: number;
   precioCompra: number;
-  reportes: Array<Reporte> = [];
   bodegas: Array<Bodega> = [];
   sucursal: string;
 }

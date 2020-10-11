@@ -56,7 +56,7 @@
       class="mat-elevation-z8"
     >
       <!-- Position Column -->
-      <ng-container matColumnDef="detalle">
+      <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef><strong>Detalle</strong></th>
         <td mat-cell *matCellDef="let element">
           <button mat-button [routerLink]="['/bodegas/details', element.id]">
@@ -64,23 +64,9 @@
               matBadge="Ver"
               matBadgePosition="before"
               matBadgeColor="accent"
-              >article</mat-icon
+              >domain</mat-icon
             >
           </button>
-        </td>
-      </ng-container>
-      <!-- Name Column -->
-      <ng-container matColumnDef="id">
-        <th
-          mat-sort-header
-          style="text-align: left"
-          mat-header-cell
-          *matHeaderCellDef
-        >
-          <strong> Reporte N° </strong>
-        </th>
-        <td style="text-align: left" mat-cell *matCellDef="let element">
-          {{ element.id }}
         </td>
       </ng-container>
 
@@ -126,6 +112,34 @@
           {{ element.nombre}}
         </td>
       </ng-container>
+       <!-- Name Column -->
+       <ng-container matColumnDef="precioCompra">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Precio Compra </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.precioCompra}}
+        </td>
+      </ng-container>
+       <!-- Name Column -->
+       <ng-container matColumnDef="precioVenta">
+        <th
+          mat-sort-header
+          style="text-align: left"
+          mat-header-cell
+          *matHeaderCellDef
+        >
+          <strong> Precio Venta </strong>
+        </th>
+        <td style="text-align: left" mat-cell *matCellDef="let element">
+          {{ element.precioVenta}}
+        </td>
+      </ng-container>
         <!-- Name Column -->
       <ng-container matColumnDef="createAt">
         <th
@@ -163,7 +177,7 @@
       <!-- Row shown when there is no matching data. -->
       <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="4">
-          No se encontraron datos con: "{{ input.value }}"
+          No se encontraron datos 
         </td>
       </tr>
     </table>

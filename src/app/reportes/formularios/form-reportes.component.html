@@ -1,122 +1,365 @@
 <app-loading *ngIf="loadingService.modal"></app-loading>
-<div class="card">
-  <div class="card-header bg-dark text-muted">
-    <h4>
-      <strong>
-        {{ titulo }}
-      </strong>
-    </h4>
-  </div>
-  <div class="card-body">
-    <h4 class="card-title">
-      <a
-        [routerLink]="['/reportes']"
-        class="btn btn-rounded btn-outline-warning btn-xs"
-      >
-        &laquo; volver
-      </a>
-    </h4>
-    <form #reporteForm="ngForm" *ngIf="reporte.producto">
-        <mat-card>
-            <mat-card-content>
+<mat-card>
+  <mat-card-header>
+    <mat-card-title>
+      {{ titulo }}
+    </mat-card-title>
+    <mat-card-subtitle>
+      <h5>
+        {{ subtitulo }}
+      </h5>
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <mat-card-subtitle>
+      <mat-card>
+        <mat-card-content>
+          <mat-card-actions>
+            <label id="example-radio-group-label">Seleccione</label>
+            <mat-radio-group
+              aria-labelledby="example-radio-group-label"
+              style="margin: 10px"
+              [(ngModel)]="opcionSelecionada"
+            >
+              <mat-radio-button
+                style="margin: 10px"
+                *ngFor="let opcion of opciones"
+                [value]="opcion"
+              >
+                {{ opcion }}
+              </mat-radio-button>
+            </mat-radio-group>
+          </mat-card-actions>
+        </mat-card-content>
+      </mat-card>
+      <span class="my-1"> Los campos con (*) son requeridos. </span>
+      <mat-card *ngIf="errores?.length > 0">
+        <mat-card-content>
+          <ul class="alert alert-danger">
+            <li *ngFor="let err of errores">
+              {{ err }}
+            </li>
+          </ul>
+        </mat-card-content>
+      </mat-card>
+    </mat-card-subtitle>
+      <div class="row">
+        <div class="col-sm-6" *ngIf="bodega">
+          <form [formGroup]="formularioReporte" *ngIf="opcionSelecionada === 'Reportes'">
+            <mat-card>
               <div class="form-group row" >
-                <label  for="producto" class="col-sm-2 col-form-label">
-                  <strong> Producto: </strong>
-                </label>
-                <div class="col-sm-6">
-                  <input
-                    type="text"
-                    name="producto"
-                    value="{{ reporte.producto.nombre }} "
-                    class="form-control"
-                    disabled
-                  />
+                <div class="col-sm-6" >
+                  <mat-form-field appearance="fill" style="width: 100%">
+                    <mat-label for="tipoReporte"> Tipo Reporte </mat-label>
+                    <mat-select
+                      formControlName="tipoReporte"
+                      required
+                      name="tipoReporte"
+                    >
+                      <mat-option
+                        *ngFor="let reporte of tipoReporte"
+                        [value]="reporte"
+                      >
+                        {{ reporte | uppercase }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-icon matSuffix>assignment</mat-icon>
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      formularioReporte.controls['tipoReporte'].invalid &&
+                      (formularioReporte.controls['tipoReporte'].dirty ||
+                        formularioReporte.controls['tipoReporte'].touched)
+                    "
+                  >
+                    <mat-error
+                      *ngIf="
+                        formularioReporte.controls['tipoReporte'].errors.required
+                      "
+                      role="alert"
+                    >
+                      Tipo Reporte requerido*
+                    </mat-error>
+                  </mat-error>
                 </div>
               </div>
+             
               <div class="form-group row" >
-                <label for="cantidadStock" class="col-sm-2 col-form-label">
-                  <strong> Stock: </strong>
-                </label>
                 <div class="col-sm-6">
-                  <input
-                    type="text"
-                    name="cantidadStock"
-                    value="{{ reporte.producto.cantidad }} "
-                    class="form-control"
-                    disabled
-                  />
+                  <mat-form-field appearance="fill" style="width: 100%">
+                    <mat-label for="descripcion"> Descripcion </mat-label>
+                    <textarea
+                      matInput
+                      required
+                      autocomplete="off"
+                      formControlName="descripcion"
+                    ></textarea>
+                    <mat-icon matSuffix>create</mat-icon>
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      formularioReporte.controls['descripcion'].invalid &&
+                      (formularioReporte.controls['descripcion'].dirty ||
+                        formularioReporte.controls['descripcion'].touched)
+                    "
+                  >
+                    <mat-error
+                      *ngIf="
+                        formularioReporte.controls['descripcion'].errors.required
+                      "
+                      role="alert"
+                    >
+                      Descripcion es requerido
+                    </mat-error>
+                  </mat-error>
+                  <mat-hint align="end">{{
+                    formularioReporte.controls["descripcion"].value
+                  }}</mat-hint>
                 </div>
               </div>
-              <div class="form-group row" >
-                <label for="nombreReporte" class="col-form-label col-sm-2">Tipo</label>
-                <div class="col-sm-6">
-                  <select  class="form-control" 
-                  [(ngModel)]="reporte.nombre" name="nombreReporte" style="width:250px;">
-                    <option *ngIf="idLocal" [ngValue]="undefined">--- selecionar un tipo ---</option>
-                    <option *ngFor="let reporte of reportesLocales" [ngValue]="reporte">
-                        {{reporte}}
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group row" >
-                <label *ngIf="idLocal" for="cantidad" class="col-sm-2 col-form-label">
-                  <strong> Retirar: </strong>
-                </label>
-                <label *ngIf="!idLocal" for="cantidad" class="col-sm-2 col-form-label">
-                  <strong> Retiro: </strong>
-                </label>
-                <div class="col-sm-6">
-                    <input type="number" class="form-control "
-                        [(ngModel)]="reporte.cantidad"
-                        style="text-transform:uppercase;"
-                        placeholder="Cantidad de producto que desea retirar"
-                        id="cantidad"
-                        name="cantidad"
-                        #cantidad="ngModel"
-                        ng-model="reporte.cantidad"
-                        requiered>
-                    <div *ngIf="cantidad.invalid && (cantidad.dirty || cantidad.touched)"
-                            class="alert alert-danger">
-                      <div class="" *ngIf="cantidad?.errors?.required" >
-                        Cantidad de retiro es Requerida
-                      </div>
-                  </div>
-                </div>
-              </div>
+             
               <div class="form-group row">
-                <label for="descripcion" class="col-sm-2 col-form-label">
-                  <strong> Descripcion: </strong>
-                </label>
                 <div class="col-sm-6">
-                  <textarea
-                    name="descripcion"
-                    [(ngModel)]="reporte.descripcion"
-                    class="form-control"
-                  ></textarea>
+                  <mat-form-field appearance="fill" style="width: 100%">
+                    <mat-label for="cantidadReporte">
+                      Cantidad De Productos
+                    </mat-label>
+                    <input
+                      matInput
+                      required
+                      type="number"
+                      autocomplete="off"
+                      formControlName="cantidadReporte"
+                      (change)="validarPositivos('Cantidad', $event)"
+                    />
+                    <mat-icon matSuffix>create</mat-icon>
+                  </mat-form-field>
+                  <mat-error
+                    *ngIf="
+                      formularioReporte.controls['cantidadReporte'].invalid &&
+                      (formularioReporte.controls['cantidadReporte'].dirty ||
+                        formularioReporte.controls['cantidadReporte'].touched)
+                    "
+                  >
+                    <mat-error
+                      *ngIf="
+                        formularioReporte.controls['cantidadReporte'].errors
+                          .required
+                      "
+                      role="alert"
+                    >
+                      Cantidad es requerido
+                    </mat-error>
+                  </mat-error>
                 </div>
               </div>
-              <div class="form-group row">
-                <div class="col-sm-6">
-                        <button *ngIf="idLocal"
-                          class="btn btn-primary"
-                          role="button"
-                          (click)="create(reporteForm)"
-                          [disabled]="!reporteForm.form.valid">
-                            Crear
-                        </button>
-                        <button *ngIf="!idLocal"
-                          class="btn btn-primary"
-                          role="button"
-                          (click)="actualziar(reporteForm)"
-                          [disabled]="!reporteForm.form.valid">
-                            Actualizar
-                        </button>
-                </div>
-              </div>
-              
+            </mat-card>
+            <mat-card-content class="bg-light">
+              <mat-card-actions class="text-white">
+                <button
+                  mat-raised-button
+                  type="button"
+                  class="btn btn-rounded btn-outline-dark btn-xs"
+                  (click)="create()"
+                  [disabled]="!formularioReporte.valid"
+                  *ngIf="!reporte.id; else elseBlock"
+                >
+                  <strong *ngIf="!formularioReporte.valid"> Crear </strong>
+                  <span *ngIf="formularioReporte.valid"> Crear </span>
+                </button>
+                <ng-template #elseBlock>
+                  <button
+                    mat-raised-button
+                    type="button"
+                    class="btn btn-rounded btn-outline-dark btn-xs"
+                    [disabled]="!formularioReporte.valid"
+                    (click)="update()"
+                  >
+                    <strong *ngIf="!formularioReporte.valid"> Actualizar </strong>
+                    <span *ngIf="formularioReporte.valid"> Actualizar </span>
+                  </button>
+                </ng-template>
+                <mat-card-footer>
+                  <mat-hint
+                    class="ml-3"
+                    style="font-size: 12px"
+                    *ngIf="!formularioReporte.valid"
+                    align="start"
+                  >
+                    El Boton Se "Habilitara" al llenar el Formulario Correctamente
+                  </mat-hint>
+                </mat-card-footer>
+              </mat-card-actions>
             </mat-card-content>
+          </form>
+          <!-- el otro formulario -->
+          <form [formGroup]="formularioTraslado" *ngIf="opcionSelecionada === 'Traslados'">
+            <div class="form-group row" >
+              <div class="col-sm-6">
+                <mat-form-field appearance="fill" style="width: 100%">
+                  <mat-label for="sucursal"> Sucursal a donde traslada </mat-label>
+                  <mat-select
+                    formControlName="sucursal"
+                    required
+                    name="sucursal"
+                    style="width: 330px"
+                  >
+                    <mat-option
+                      *ngFor="let sucursal of sucursales"
+                      [value]="sucursal"
+                    >
+                      {{ sucursal.nombre | uppercase }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix> location_on</mat-icon>
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                  formularioTraslado.controls['sucursal'].invalid &&
+                    (formularioTraslado.controls['sucursal'].dirty ||
+                    formularioTraslado.controls['sucursal'].touched)
+                  "
+                >
+                  <mat-error
+                    *ngIf="formularioTraslado.controls['sucursal'].errors.required"
+                    role="alert"
+                  >
+                    Sucursal es requerida
+                  </mat-error>
+                </mat-error>
+              </div>
+             
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <mat-form-field appearance="fill" style="width: 100%">
+                  <mat-label for="cantidadTraslado">
+                    Cantidad De Productos
+                  </mat-label>
+                  <input
+                    matInput
+                    required
+                    type="number"
+                    autocomplete="off"
+                    formControlName="cantidadTraslado"
+                    (change)="validarPositivos('Cantidad', $event)"
+                  />
+                  <mat-icon matSuffix>create</mat-icon>
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                  formularioTraslado.controls['cantidadTraslado'].invalid &&
+                    (formularioTraslado.controls['cantidadTraslado'].dirty ||
+                    formularioTraslado.controls['cantidadTraslado'].touched)
+                  "
+                >
+                  <mat-error
+                    *ngIf="
+                    formularioTraslado.controls['cantidadTraslado'].errors
+                        .required
+                    "
+                    role="alert"
+                  >
+                    Cantidad es requerido
+                  </mat-error>
+                </mat-error>
+              </div>
+            </div>
+            <div class="form-group row" >
+              <div class="col-sm-6">
+                <mat-form-field appearance="fill" style="width: 100%">
+                  <mat-label for="descripcionTraslado"> Descripcion </mat-label>
+                  <textarea
+                    matInput
+                    required
+                    autocomplete="off"
+                    formControlName="descripcionTraslado"
+                  ></textarea>
+                  <mat-icon matSuffix>create</mat-icon>
+                </mat-form-field>
+                <mat-error
+                  *ngIf="
+                  formularioTraslado.controls['descripcionTraslado'].invalid &&
+                    (formularioTraslado.controls['descripcionTraslado'].dirty ||
+                    formularioTraslado.controls['descripcionTraslado'].touched)
+                  "
+                >
+                  <mat-error
+                    *ngIf="
+                    formularioTraslado.controls['descripcionTraslado'].errors.required
+                    "
+                    role="alert"
+                  >
+                    Descripcion es requerido
+                  </mat-error>
+                </mat-error>
+                <mat-hint align="end">{{
+                  formularioTraslado.controls["descripcionTraslado"].value
+                }}</mat-hint>
+              </div>
+            </div>
+            <mat-card-content class="bg-light">
+              <mat-card-actions class="text-white">
+                <button
+                  mat-raised-button
+                  type="button"
+                  class="btn btn-rounded btn-outline-dark btn-xs"
+                  (click)="create()"
+                  [disabled]="!formularioTraslado.valid"
+                  
+                >
+                  <strong *ngIf="!formularioTraslado.valid"> Crear </strong>
+                  <span *ngIf="formularioTraslado.valid"> Crear </span>
+                </button>
+                <mat-card-footer>
+                  <mat-hint
+                    class="ml-3"
+                    style="font-size: 12px"
+                    *ngIf="!formularioTraslado.valid"
+                    align="start"
+                  >
+                    El Boton Se "Habilitara" al llenar el Formulario Correctamente
+                  </mat-hint>
+                </mat-card-footer>
+              </mat-card-actions>
+            </mat-card-content>
+          </form>
+        </div>
+        <div class="col-sm-6" *ngIf="bodega">
+          <mat-card>
+            <ul class="list-group text-dark">
+              <li class="list-group-item">
+                <strong>Sucursal Asignada: </strong>
+                {{ bodega.sucursal.nombre | uppercase }}
+              </li>
+              <li class="list-group-item">
+                <strong>Producto: </strong>
+                {{ bodega.producto.nombre | uppercase }}
+              </li>
+              <li class="list-group-item">
+                <strong>Precio Compra: </strong>
+                {{ formatNumber(bodega.precioCompra) }}
+              </li>
+              <li class="list-group-item">
+                <strong>Precio Venta: </strong>
+                {{ formatNumber(bodega.precioVenta) }}
+              </li>
+              <li class="list-group-item">
+                <strong>Cantidad: </strong>
+                {{ bodega.cantidad }}
+              </li>
+              <li class="list-group-item">
+                <strong>Actualizado: </strong>
+                {{ bodega.createAt }}
+              </li>
+              <li class="list-group-item">
+                <strong>Ult. Movimiento: </strong>
+                {{ bodega.fechaActualizacion }}
+              </li>
+            </ul>
           </mat-card>
-    </form>
-  </div>
-</div>
+        </div>
+      </div>
+      
+
+         

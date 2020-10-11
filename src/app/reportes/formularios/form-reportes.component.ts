@@ -1,3 +1,6 @@
+import { SucursalService } from './../../sucursales/services/sucursal.service';
+import { BodegaService } from './../../bodegas/service/bodega.service';
+import { Bodega } from './../../bodegas/models/bodega';
 import { ReporteService } from './../services/reporte.service';
 import { UserService } from './../../users/services/user.service';
 import { Reporte } from './../interfaces/reporte';
@@ -8,7 +11,12 @@ import { AuthService } from './../../users/services/auth.service';
 import { ProductoService } from './../../productos/services/producto.service';
 import { Producto } from './../../productos/interfaces/producto';
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import Swal from 'sweetalert2';
+import { FormControl, Validators,
+  FormBuilder, FormGroup} from '@angular/forms';
+
+import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
 
 
 
@@ -16,13 +24,29 @@ import Swal from 'sweetalert2';
   selector: 'app-form-reportes',
   templateUrl: './form-reportes.component.html',
 })
+
 export class FormReportesComponent implements OnInit {
   titulo: string;
+  subtitulo = 'Crear Reporte';
   reporte: Reporte = new Reporte();
   errores: string[];
-  reportesLocales: string[] = ['Daño', 'Prestamo', 'Perdida', 'Otro'];
+  tipoReporte: string[] = ['Daño', 'Perdida', 'Otro'];
   idLocal = '';
-  cantidadLocal = 0;
+  bodega: Bodega;
+  sucursales: Sucursal[];
+  nombreProducto: string;
+  bodegaSucursalNombre: string;
+  preCantidad = 0;
+  actualizando = false;
+  opcionSelecionada = 'Reportes';
+  opciones: string[] = ['Reportes', 'Traslados'];
+  productosFiltrados: Observable<Producto[]>;
+  autocompleteControl = new FormControl();
+  producto = new Producto();
+  codigo: string;
+
+  formularioReporte: FormGroup;
+  formularioTraslado: FormGroup;
 
   constructor(
     public productoService: ProductoService,
@@ -32,208 +56,222 @@ export class FormReportesComponent implements OnInit {
     public funcionesService: FuncionesService,
     public loadingService: LoadingService,
     public router: Router,
+    public formBuilder: FormBuilder,
     public activatedRoute: ActivatedRoute,
+    public bodegaService: BodegaService,
+    public sucursalService: SucursalService,
   ) {}
 
   ngOnInit() {
-    this.titulo = `${this.funcionesService.setTitulo()} -  Reportes -`;
-    this.comprobacion();
+    this.cargarBodega();
+    this.cargarUsuario();
+    this.titulo = `${this.funcionesService.setTitulo()} `;
   }
 
-  comprobacion() {
-    this.idLocal = sessionStorage.getItem('idpro');
-    if (this.idLocal === null || this.idLocal === '' || this.idLocal === undefined) {
-      this.activatedRoute.paramMap.subscribe((params) => {
-        const reporteId = +params.get('reporteId');
-        this.reporteService
-          .getReporte(reporteId)
-          .subscribe((reporte) => (this.reporte = reporte, this.cantidadLocal = reporte.cantidad));
-        this.userService
+  cargarUsuario() {
+    this.userService
           .getUser(JSON.parse(sessionStorage.getItem('usuario')).id)
           .subscribe((usuario) => {
             (this.reporte.usuario = usuario), this.loadingService.cerrarModal();
           });
-      });
+  }
+  cargarBodega() {
+    this.activatedRoute.paramMap.subscribe(
+      params => {
+        const id = +params.get('id');
+        this.bodegaService.getBodegas(id)
+        .subscribe(
+          bodega => {(this.bodega = bodega, this.preCantidad  = bodega.cantidad,
+                    this.reporte.bodega = bodega, console.log(bodega.sucursal),
+                    this.bodegaSucursalNombre = bodega.sucursal.nombre), this.crearFormulario();
+                     this.cargarListaSucursal();
+                     this.loadingService.cerrarModal();
+          });
+    });
+  }
+
+  cargarListaSucursal() {
+    this.sucursalService.getSucursalLista()
+    .subscribe(sucursales => (
+      this.sucursales = sucursales.filter(
+        sucursal => sucursal.nombre !== this.bodegaSucursalNombre)));
+  }
+
+
+
+  create() {
+    if (this.opcionSelecionada === 'Reportes') {
+      if (this.asignarDatosParaGuardarRerporte()) {
+        this.loadingService.abrirModal();
+        this.bodegaService.update(this.bodega)
+        .subscribe( () => {
+          this.reporteService.create(this.reporte)
+          .subscribe( reporte  => {
+            Swal.fire({
+              type: 'success',
+              title: `Creado Exitosamente!`,
+              text: `Reporte tipo "${reporte.nombre}"`,
+              footer: `La Bodega Tambien se Actualizo`
+            });
+            this.loadingService.cerrarModal();
+            // this.router.navigate(['/reportes', reporte.id]);
+            this.router.navigate(['/reportes']);
+          },
+          err => {
+            this.errores = err.error.errors as string[];
+            this.loadingService.cerrarModal();
+          });
+        },
+        err => {
+          this.errores = err.error.errors as string[];
+          this.loadingService.cerrarModal();
+        });
+      } else {
+        console.error('Ha ocurrido algun error al crear reporte');
+        return;
+      }
     } else {
-      this.productoService
-          .getProducto(this.idLocal)
-          .subscribe((producto) => (this.reporte.producto = producto));
-      this.userService
-          .getUser(JSON.parse(sessionStorage.getItem('usuario')).id)
-          .subscribe((usuario) => {
-            (this.reporte.usuario = usuario), this.loadingService.cerrarModal();
+       if (this.asignarDatosParaGuardarTraslado()) {
+          this.loadingService.abrirModal();
+          this.bodegaService.update(this.bodega)
+          .subscribe( () => {
+            this.reporteService.create(this.reporte)
+            .subscribe( reporte  => {
+              Swal.fire({
+                type: 'success',
+                title: `Creado Exitosamente!`,
+                text: `Reporte tipo "${reporte.nombre}"`,
+                footer: `La Bodega Tambien se Actualizo`
+              });
+              this.loadingService.cerrarModal();
+              // this.router.navigate(['/reportes', reporte.id]);
+              this.router.navigate(['/reportes']);
+            },
+            err => {
+              this.errores = err.error.errors as string[];
+              this.loadingService.cerrarModal();
+            });
+          },
+          err => {
+            this.errores = err.error.errors as string[];
+            this.loadingService.cerrarModal();
           });
+       } else {
+          console.error('Ha ocurrido algun error al crear reporte');
+          return;
+       }
+    }
+  }
+  update() {
+  }
+
+  crearFormulario() {
+    this.formularioReporte = this.formBuilder.group({
+      tipoReporte: ['', Validators.compose([
+        Validators.required,
+      ])],
+      cantidadReporte: [1, Validators.compose([
+        Validators.required, Validators.min(0),
+        Validators.max(this.preCantidad + 1)
+      ])],
+      descripcion: ['', Validators.compose([
+        Validators.required, Validators.minLength(10),
+        Validators.maxLength(100)
+      ])],
+    });
+
+    this.formularioTraslado = this.formBuilder.group({
+      cantidadTraslado: [1, Validators.compose([
+        Validators.required, Validators.min(0),
+        Validators.max(this.preCantidad + 1)
+      ])],
+      descripcionTraslado: ['', Validators.compose([
+        Validators.minLength(10),
+        Validators.maxLength(100)
+      ])],
+      sucursal: ['', Validators.compose([
+        Validators.required,
+      ])],
+    });
+  }
+
+
+  formatNumber(cantidad: number): string {
+    return this.funcionesService.formatNumber(cantidad);
+ }
+
+ validarPositivos(campo: string, event: any): number {
+  const cantidad: number = event.target.value as number;
+  if (this.actualizando === false ) {
+    if (cantidad < 0) {
+      Swal.fire({
+        type: 'error',
+        title: `${cantidad}`,
+        text: `Es un valor no valido para "${campo}"`,
+        footer: 'Intente de nuevo',
+        });
+      return event.target.value = 0;
+    } else if (cantidad > this.preCantidad) {
+      Swal.fire({
+        type: 'error',
+        title: `Accion No Permitida!`,
+        text: `Cantidad en el stock "${this.preCantidad}", No puede retirar o trasladar mas. `,
+        footer: 'Intente de Nuevo',
+        });
+      return event.target.value = this.preCantidad;
+    }
+  } else {
+    if (cantidad > this.preCantidad) {
+      Swal.fire({
+        type: 'error',
+        title: `Accion No Permitida!`,
+        text: `Cantidad en el stock "${this.preCantidad}", No puede retirar o trasnladar mas. `,
+        footer: 'Intente de Nuevo',
+        });
+      return event.target.value = this.preCantidad;
     }
   }
 
-  create(reporteForm): void {
-    sessionStorage.removeItem('idpro');
-    if (this.reporte.cantidad === 0 ||  this.reporte.cantidad === null || this.reporte.cantidad === undefined) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `La cantidad de retiro no puede ser vacia`,
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    if (this.reporte.descripcion === '' ||  this.reporte.descripcion === null || this.reporte.descripcion === undefined) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `Debe agregar una descipcion`,
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    if (this.reporte.nombre === '' ||  this.reporte.nombre === null || this.reporte.nombre === undefined) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `Debe agregar tipo de Reporte`,
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    if (this.reporte.producto.cantidad < this.reporte.cantidad) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `Cantidad de retiro`,
-        footer: 'mayor al Stock',
-        });
-      return;
-    }
-    if (this.reporte.cantidad < 0) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `No ingresar Valores`,
-        footer: 'negativos',
-        });
-      this.reporte.cantidad = 0;
-      return;
-    }
-    if (reporteForm.form.valid ) {
-      this.loadingService.abrirModal();
-      this.reporteService.create(this.reporte).subscribe(reporte => {
-        this.reporte.producto.cantidad = this.reporte.producto.cantidad - this.reporte.cantidad;
-        this.productoService.update(this.reporte.producto)
-        .subscribe(
-          producto => {
-            Swal.fire({
-              type: 'success',
-              title: `Reporte Generado Exitosamente:`,
-              text: `Creado!`,
-              footer: ``
-            });
-            this.loadingService.cerrarModal();
-            // this.router.navigate(['/reportes', reporte.id]);
-            this.router.navigate(['/reportes']);
-          },
-          err => {
-            this.errores = err.error.errors as string[];
-            this.loadingService.cerrarModal();
-          }
-        );
-      },
-      err => {
-        this.errores = err.error.errors as string[],
-        this.loadingService.cerrarModal();
+}
+
+asignarDatosParaGuardarRerporte(): boolean {
+  const cantidadModificada = this.formularioReporte.value.cantidadReporte;
+  if ( cantidadModificada <= 0 ) {
+    Swal.fire({
+      type: 'error',
+      title: `Accion No Permitida!`,
+      text: `No puede generar un reporte de  "${cantidadModificada}" Productos`,
+      footer: 'Intente de Nuevo',
       });
-    }
+    return false;
   }
+  const nuevaCantidadBodega = this.preCantidad - cantidadModificada;
+  this.bodega.cantidad = nuevaCantidadBodega;
+  this.reporte.nombre = this.formularioReporte.value.tipoReporte;
+  this.reporte.cantidad = cantidadModificada;
+  this.reporte.precioCompra = this.bodega.precioCompra;
+  this.reporte.descripcion = this.formularioReporte.value.descripcion;
+  return true;
+}
 
-  actualziar(reporteForm) {
-    sessionStorage.removeItem('idpro');
-    if ( this.reporte.cantidad === null || this.reporte.cantidad === undefined) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `La cantidad de retiro no puede ser vacia`,
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    if (this.reporte.descripcion === '' ||  this.reporte.descripcion === null || this.reporte.descripcion === undefined) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `Debe agregar una descipcion`,
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    if (this.reporte.nombre === '' ||  this.reporte.nombre === null || this.reporte.nombre === undefined) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `Debe agregar tipo de Reporte`,
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    if (this.cantidadLocal < this.reporte.cantidad) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `No puede retirar mas productos`,
-        footer: 'Genere un nuevo reporte para ello',
-        });
-      return;
-    }
-    if (this.reporte.cantidad < 0) {
-      Swal.fire({
-        type: 'error',
-        title: 'Ooops',
-        text: `No ingresar Valores`,
-        footer: 'negativos',
-        });
-      this.reporte.cantidad = 0;
-      return;
-    }
-    if (reporteForm.form.valid ) {
-      this.loadingService.abrirModal();
-      this.reporte.fechaModificado = new Date();
-      this.reporteService.update(this.reporte).subscribe(reporte => {
-        if ( this.cantidadLocal === this.reporte.cantidad) {
-          this.reporte.producto.cantidad = this.reporte.producto.cantidad;
-        } else if ( this.cantidadLocal < this.reporte.cantidad) {
-          this.reporte.producto.cantidad = this.reporte.producto.cantidad - (this.reporte.cantidad - this.cantidadLocal);
-        } else if ( this.cantidadLocal > this.reporte.cantidad) {
-          this.reporte.producto.cantidad = this.reporte.producto.cantidad + (this.cantidadLocal - this.reporte.cantidad);
-        }
-        this.productoService.update(this.reporte.producto)
-        .subscribe(
-          producto => {
-            Swal.fire({
-              type: 'success',
-              title: `Reporte modificado :`,
-              text: `Exitosamente`,
-              footer: ``
-            });
-            this.loadingService.cerrarModal();
-            // this.router.navigate(['/reportes', reporte.id]);
-            this.router.navigate(['/reportes']);
-          },
-          err => {
-            this.errores = err.error.errors as string[];
-            this.loadingService.cerrarModal();
-          }
-        );
-      },
-      err => {
-        this.errores = err.error.errors as string[],
-        this.loadingService.cerrarModal();
+asignarDatosParaGuardarTraslado(): boolean {
+  const cantidadModificada = this.formularioTraslado.value.cantidadTraslado;
+  if ( cantidadModificada <= 0 ) {
+    Swal.fire({
+      type: 'error',
+      title: `Accion No Permitida!`,
+      text: `No puede generar un traslado de  "${cantidadModificada}" Productos`,
+      footer: 'Intente de Nuevo',
       });
-    }
-
+    return false;
   }
-compararRegion(o1: Reporte, o2: Reporte): boolean {
-    if (o1 === undefined && o2 === undefined) {
-      return true;
-    }
+  const nuevaCantidadBodega = this.preCantidad - cantidadModificada;
+  this.bodega.cantidad = nuevaCantidadBodega;
+  this.reporte.nombre = 'Traslado';
+  this.reporte.cantidad = cantidadModificada;
+  this.reporte.precioCompra = this.bodega.precioCompra;
+  this.reporte.descripcion = this.formularioTraslado.value.descripcionTraslado;
+  return true;
+}
 
-    return o1 === null || o2 === null || o1 === undefined || o2 === undefined ? false : o1.id === o2.id;
-  }
 }

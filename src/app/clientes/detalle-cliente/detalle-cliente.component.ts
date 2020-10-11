@@ -39,6 +39,10 @@ export class DetalleClienteComponent implements OnInit {
 
    ngOnInit() {
     this.loadingService.abrirModal();
+    this.cargarCliente();
+  }
+
+  cargarCliente() {
     this.activatedRoute.paramMap.subscribe(params => {
       const id = +params.get('id');
       this.clienteService.getCliente(id)

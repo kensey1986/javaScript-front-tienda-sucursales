@@ -1,5 +1,6 @@
 import { Producto } from './../../productos/interfaces/producto';
 import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
+import { Reporte } from 'src/app/reportes/interfaces/reporte';
 export class Bodega {
   id: number;
   idCompuesto: string;
@@ -11,4 +12,6 @@ export class Bodega {
   nombre: string;
   precioVenta: number;
   precioCompra: number;
+  reportes: Array<Reporte> = [];
+
 }

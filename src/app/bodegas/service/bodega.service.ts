@@ -49,6 +49,8 @@ export class BodegaService {
   }
 
 
+
+
   getBodegas(id: number): Observable<Bodega> {
     return this.http.get<Bodega>(`${this.urlEndPoint}/${id}`).pipe(
       catchError (e => {

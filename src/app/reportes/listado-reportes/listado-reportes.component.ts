@@ -21,7 +21,7 @@ export class ListadoReportesComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
-  displayedColumns: string[] = ['detalle',  'producto.nombre', 'id', 'nombre', 'createAt', 'fechaModificado', 'editar'  ];
+  displayedColumns: string[] = ['detalle',  'producto.nombre', 'usuario', 'nombre', 'createAt', 'fechaModificado', 'editar'  ];
   dataSource = new MatTableDataSource();
   activar = true;
 
@@ -54,7 +54,7 @@ export class ListadoReportesComponent implements OnInit {
 
   cargarListadoReportesCompleto() {
     this.reporteService.getListadoReportes()
-    .subscribe(datosTabla => {this.dataSource.data = datosTabla;
+    .subscribe(datosTabla => {(this.dataSource.data = datosTabla, console.log(datosTabla));
                               if (datosTabla.length > 0 ) {
                                 this.activar = false;
                                 this.loadingService.cerrarModal();

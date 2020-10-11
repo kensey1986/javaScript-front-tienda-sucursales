@@ -78,6 +78,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatListModule } from '@angular/material/list';
 
 
 
@@ -138,7 +139,7 @@ const routes: Routes = [
 
   {path: 'reportes', component: ListadoReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'reportes/form', component: FormReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
-  {path: 'reportes/form/:reporteId', component: FormReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
+  {path: 'reportes/form/:id', component: FormReportesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
   {path: 'reportes/details/:id', component: DetalleReporteComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'sucursales/form/:id', component: FormSucursalesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
 
@@ -192,6 +193,7 @@ const routes: Routes = [
     BodegasListaComponent,
     BodegasFormularioComponent,
     BodegasDetalleComponent,
+    
   ],
   imports: [
 
@@ -218,7 +220,8 @@ const routes: Routes = [
     MatPaginatorModule,
     MatSortModule,
     MatBadgeModule,
-    MatRadioModule
+    MatRadioModule,
+    MatListModule
   ],
   providers: [ClienteService,
               UserService,

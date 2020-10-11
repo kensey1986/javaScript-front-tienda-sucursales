@@ -13,7 +13,7 @@
         >&laquo; Regresar</a
       >
       <button *ngIf="authService.hasRole('ROLE_ADMIN')"
-        [routerLink]="['/reportes/form/', reporte.producto.id]"
+        [routerLink]="['/reportes/form/', reporte.id]"
         class="btn btn-rounded btn-outline-secondary btn-xs ml-2"
         type="button">
         Editar
@@ -34,6 +34,7 @@
           <th>Producto</th>
           <th>Descripcion</th>
           <th>Cant</th>
+          <th>Costo Compra</th>
           <th>Creado</th>
           <th>Modificado</th>
         </tr>
@@ -41,10 +42,11 @@
       <tbody class="text-center">
         <tr>
           <td>{{ reporte.id }}</td>
-          <td>{{ reporte.nombre }}</td>
-          <td>{{ reporte.producto.nombre }}</td>
+          <td>{{ reporte.nombre | uppercase }}</td>
+          <td>{{ reporte.bodega.producto.nombre | uppercase}}</td>
           <td>{{ reporte.descripcion }}</td>
           <td>{{ reporte.cantidad }}</td>
+          <td>{{ formatNumber(reporte.precioCompra) }}</td>
           <td>{{ reporte.createAt | date: "EEEE dd, MMMM yyyy" }}</td>
           <td>{{ reporte.fechaModificado | date: "EEEE dd, MMMM yyyy" }}</td>
         </tr>

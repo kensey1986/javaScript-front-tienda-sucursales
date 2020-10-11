@@ -53,11 +53,11 @@ export class BodegasFormularioComponent implements OnInit {
   actualizando = false;
 
   constructor(
-              public  bodegaService: BodegaService,
-              public  productoService: ProductoService,
-              public  router: Router,
-              public  sucursalService: SucursalService,
-              public  activatedRoute: ActivatedRoute,
+              public bodegaService: BodegaService,
+              public productoService: ProductoService,
+              public router: Router,
+              public sucursalService: SucursalService,
+              public activatedRoute: ActivatedRoute,
               public loadingService: LoadingService,
               public formBuilder: FormBuilder,
               public funcionesService: FuncionesService
@@ -130,8 +130,8 @@ export class BodegasFormularioComponent implements OnInit {
       this.asignarDatosParaGuardar();
       if (this.asignarDatosParaGuardar()) {
         this.bodegaService.createBodega(this.bodega).subscribe(
-          () => {
-             this.router.navigate(['/bodegas']),
+          bodega => {
+             this.router.navigate(['/bodegas/details', bodega.id]),
              Swal.fire({
                type: 'success',
                title: `Bodega Creada`,
@@ -159,8 +159,8 @@ export class BodegasFormularioComponent implements OnInit {
       this.validarDatosParaActualizar();
       this.bodegaService.update(this.bodega)
       .subscribe(
-        () => {
-          this.router.navigate(['/bodegas']),
+        bodega => {
+          this.router.navigate(['/bodegas/details', bodega.id]),
           Swal.fire({
             type: 'success',
             title: `Bodega Actualizada`,
@@ -184,7 +184,7 @@ export class BodegasFormularioComponent implements OnInit {
   // tratamiento a formulario
   crearFormulario() {
     this.formularioCreado = this.formBuilder.group({
-      cantidad: [0, Validators.compose([
+      cantidad: [1, Validators.compose([
         Validators.required, Validators.min(0)
       ])],
       sucursal: ['', Validators.compose([
@@ -249,7 +249,6 @@ export class BodegasFormularioComponent implements OnInit {
       console.error('Id producto ERROR formulario Bodega');
     }
     this.bodega.producto.bodegas = null;
-    this.bodega.producto.reportes = null;
     this.bodega.sucursal.bodegas = null;
     this.bodega.sucursal.facturas = null;
     return true;
