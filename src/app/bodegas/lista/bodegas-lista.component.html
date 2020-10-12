@@ -24,15 +24,16 @@
         >
          Crear Bodega 
         </button>
-        <!-- <button
-          [disabled]="[activar]"
-          mat-raised-button
-          class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
-          type="button"
-          (click)="abrirModal()"
-        >
-          Buscar Cliente
-        </button> -->
+        <button
+        [disabled]="[activar]"
+        mat-raised-button
+        class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
+        *ngIf="authService.hasRole('ROLE_ADMIN')"
+        type="button"
+        [routerLink]="['/bodegas/informes']"
+      >
+        Informes
+      </button>
       </mat-card-actions>
     <mat-form-field
       *ngIf="!activar"
@@ -123,7 +124,7 @@
           <strong> Precio Compra </strong>
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
-          {{ element.precioCompra}}
+          {{ formatNumber(element.precioCompra)}}
         </td>
       </ng-container>
        <!-- Name Column -->
@@ -137,7 +138,7 @@
           <strong> Precio Venta </strong>
         </th>
         <td style="text-align: left" mat-cell *matCellDef="let element">
-          {{ element.precioVenta}}
+          {{ formatNumber(element.precioVenta)}}
         </td>
       </ng-container>
         <!-- Name Column -->

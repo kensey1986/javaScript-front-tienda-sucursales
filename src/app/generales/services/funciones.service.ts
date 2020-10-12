@@ -8,7 +8,7 @@ import Swal from 'sweetalert2';
 })
 export class FuncionesService {
 
- public  urlBase = 'http://192.168.43.2:8080/';
+ public  urlBase = 'http://localhost:8080/';
  // public urlBase = 'https://sifi-api-rest-java.herokuapp.com/';
 
   constructor(

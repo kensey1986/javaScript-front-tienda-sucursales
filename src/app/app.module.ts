@@ -25,7 +25,6 @@ import { ProductosComponent } from './productos/lista-productos/productos.compon
 import { FormProductoComponent } from './productos/formularios/form-producto.component';
 import { DetalleProductoComponent } from './productos/detalle-producto/detalle-producto.component';
 import { ProductoBuscarComponent } from './productos/producto-buscar/producto-buscar.component';
-import { InformesComponent } from './productos/informes/informes.component';
 
 
 
@@ -93,6 +92,7 @@ import { FilterPipe } from './generales/filter.pipe';
 import { BodegasListaComponent } from './bodegas/lista/bodegas-lista.component';
 import { BodegasFormularioComponent } from './bodegas/formularios/bodegas-formulario.component';
 import { BodegasDetalleComponent } from './bodegas/detalle/bodegas-detalle.component';
+import { BoodegasInformeComponent } from './bodegas/informe/bodegas-informe.component';
 
 
 registerLocaleData(localeES, 'es');
@@ -108,7 +108,6 @@ const routes: Routes = [
   {path: 'clientes/form/:id', component: FormClienteComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
 
   {path: 'productos', component: ProductosComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
-  {path: 'productos/informes', component: InformesComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'productos/page/:page', component: ProductosComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'productos/details/:id', component: DetalleProductoComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'productos/form', component: FormProductoComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_ADMIN'}},
@@ -148,6 +147,7 @@ const routes: Routes = [
   {path: 'bodegas/form', component: BodegasFormularioComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'bodegas/form/:id', component: BodegasFormularioComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
   {path: 'bodegas/details/:id', component: BodegasDetalleComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
+  {path: 'bodegas/informes', component: BoodegasInformeComponent, canActivate: [ AuthGuard, RoleGuard], data: {role: 'ROLE_USER'}},
 
 
   {path: '**', component: Pagina404Component},
@@ -188,12 +188,11 @@ const routes: Routes = [
     ListadoReportesComponent,
     FormReportesComponent,
     DetalleReporteComponent,
-    InformesComponent,
     FilterPipe,
     BodegasListaComponent,
     BodegasFormularioComponent,
     BodegasDetalleComponent,
-    
+    BoodegasInformeComponent,
   ],
   imports: [
 

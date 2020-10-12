@@ -7,6 +7,8 @@ export class ItemFactura {
   importe: number;
   precioVendido: number;
   precioComprado: number;
+  desPorcentaje: number;
+  desDinero: number;
 
   public calcularImporte() {
     return this.cantidad * this.producto.precio;

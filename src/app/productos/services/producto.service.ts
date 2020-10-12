@@ -144,5 +144,5 @@ export class ProductoService {
 
   getFiltrarProductosPorFecha(term1: string, term2: string): Observable<Producto[]> {
     return this.http.get<Producto[]>(`${this.urlEndPoint}/fecha1/${term1}/fecha2/${term2}`);
-}
+  }
 }

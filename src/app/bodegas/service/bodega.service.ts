@@ -1,3 +1,4 @@
+import { Producto } from './../../productos/interfaces/producto';
 import { FuncionesService } from '../../generales/services/funciones.service';
 import { Injectable } from '@angular/core';
 import { Bodega } from '../models/bodega';
@@ -6,6 +7,7 @@ import { Observable,  throwError } from 'rxjs';
 import {  catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { Sucursal } from 'src/app/sucursales/interfaces/sucursal';
 
 
 
@@ -55,7 +57,20 @@ export class BodegaService {
     return this.http.get<Bodega>(`${this.urlEndPoint}/${id}`).pipe(
       catchError (e => {
         if (e.status !== 401 && e.error.mensaje) {
-          this.router.navigate(['/clientes']);
+          this.router.navigate(['/bodegas']);
+          console.error(e.error.mensaje);
+        }
+        return throwError(e);
+      })
+    );
+  }
+
+  getVerificarBodegas(id: string): Observable<Bodega> {
+    console.log(id);
+    return this.http.get<Bodega>(`${this.urlEndPoint}/idCompuesto/${id}`).pipe(
+      catchError (e => {
+        if (e.status !== 401 && e.error.mensaje) {
+          this.router.navigate(['/bodegas']);
           console.error(e.error.mensaje);
         }
         return throwError(e);
@@ -123,6 +138,13 @@ export class BodegaService {
     );
   }
 
+  getBodegasPorFechaCreate(term1: string, term2: string): Observable<Bodega[]> {
+    return this.http.get<Bodega[]>(`${this.urlEndPoint}/create/fecha1/${term1}/fecha2/${term2}`);
+  }
+
+  getBodegasPorFechaActual(term1: string, term2: string): Observable<Bodega[]> {
+    return this.http.get<Bodega[]>(`${this.urlEndPoint}/actual/fecha1/${term1}/fecha2/${term2}`);
+  }
 
 
 }

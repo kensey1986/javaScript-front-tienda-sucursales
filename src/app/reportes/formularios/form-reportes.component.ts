@@ -35,6 +35,9 @@ export class FormReportesComponent implements OnInit {
   bodega: Bodega;
   sucursales: Sucursal[];
   nombreProducto: string;
+  productoBodega: Producto;
+  sucursalTraslado: Sucursal;
+  bodegaIncrementar: Bodega;
   bodegaSucursalNombre: string;
   preCantidad = 0;
   actualizando = false;
@@ -44,6 +47,8 @@ export class FormReportesComponent implements OnInit {
   autocompleteControl = new FormControl();
   producto = new Producto();
   codigo: string;
+  idCompuesto: string;
+  cantidadModificada: number;
 
   formularioReporte: FormGroup;
   formularioTraslado: FormGroup;
@@ -63,6 +68,7 @@ export class FormReportesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadingService.abrirModal();
     this.cargarBodega();
     this.cargarUsuario();
     this.titulo = `${this.funcionesService.setTitulo()} `;
@@ -82,7 +88,7 @@ export class FormReportesComponent implements OnInit {
         this.bodegaService.getBodegas(id)
         .subscribe(
           bodega => {(this.bodega = bodega, this.preCantidad  = bodega.cantidad,
-                    this.reporte.bodega = bodega, console.log(bodega.sucursal),
+                    this.reporte.bodega = bodega, this.productoBodega = bodega.producto,
                     this.bodegaSucursalNombre = bodega.sucursal.nombre), this.crearFormulario();
                      this.cargarListaSucursal();
                      this.loadingService.cerrarModal();
@@ -115,7 +121,7 @@ export class FormReportesComponent implements OnInit {
             });
             this.loadingService.cerrarModal();
             // this.router.navigate(['/reportes', reporte.id]);
-            this.router.navigate(['/reportes']);
+            this.router.navigate(['/reportes/details/']);
           },
           err => {
             this.errores = err.error.errors as string[];
@@ -128,29 +134,53 @@ export class FormReportesComponent implements OnInit {
         });
       } else {
         console.error('Ha ocurrido algun error al crear reporte');
-        return;
       }
     } else {
        if (this.asignarDatosParaGuardarTraslado()) {
           this.loadingService.abrirModal();
-          this.bodegaService.update(this.bodega)
-          .subscribe( () => {
-            this.reporteService.create(this.reporte)
-            .subscribe( reporte  => {
+          this.bodegaService.getVerificarBodegas(this.idCompuesto)
+          .subscribe( bodega => {this.bodegaIncrementar = bodega; console.log(bodega);
+                                 if (bodega !== null ) {
+                                  this.bodegaIncrementar.precioCompra = this.calcularPreciCompra();
+                                  this.bodegaIncrementar.cantidad = this.bodegaIncrementar.cantidad + this.cantidadModificada;
+                                  this.bodegaService.update(this.bodega)
+                                  .subscribe( () => {
+                                    this.bodegaService.update(this.bodegaIncrementar)
+                                    .subscribe( () => {
+                                      this.reporteService.create(this.reporte)
+                                      .subscribe( reporte  => {
+                                        console.log(this.bodegaIncrementar);
+                                        Swal.fire({
+                                          type: 'success',
+                                          title: `Traslado ${this.cantidadModificada} "${this.bodega.producto.nombre}"`,
+                                          text: `Desde: "${this.bodega.nombre}" hacia: "${this.bodegaIncrementar.nombre}`,
+                                          footer: `La Bodega Tambien se Actualizo`
+                                        });
+                                        this.loadingService.cerrarModal();
+                                        // this.router.navigate(['/reportes', reporte.id]);
+                                        this.router.navigate(['/reportes/details/', reporte.id]);
+                                      },
+                                      err => {
+                                        this.errores = err.error.errors as string[];
+                                        this.loadingService.cerrarModal();
+                                      });
+                                    });
+                                  },
+                                  err => {
+                                    this.errores = err.error.errors as string[];
+                                    this.loadingService.cerrarModal();
+                                  });
+            } else {
+              console.log('ingreso a negarlo');
               Swal.fire({
-                type: 'success',
-                title: `Creado Exitosamente!`,
-                text: `Reporte tipo "${reporte.nombre}"`,
-                footer: `La Bodega Tambien se Actualizo`
-              });
+                type: 'error',
+                title: `Accion No Permitida!`,
+                // tslint:disable-next-line: max-line-length
+                text: `No Existe Bodega en la Sede "${this.sucursalTraslado.nombre}"  para el Producto "${this.productoBodega.nombre}"`,
+                footer: 'Intente de Nuevo',
+                });
               this.loadingService.cerrarModal();
-              // this.router.navigate(['/reportes', reporte.id]);
-              this.router.navigate(['/reportes']);
-            },
-            err => {
-              this.errores = err.error.errors as string[];
-              this.loadingService.cerrarModal();
-            });
+            }
           },
           err => {
             this.errores = err.error.errors as string[];
@@ -158,7 +188,6 @@ export class FormReportesComponent implements OnInit {
           });
        } else {
           console.error('Ha ocurrido algun error al crear reporte');
-          return;
        }
     }
   }
@@ -200,6 +229,11 @@ export class FormReportesComponent implements OnInit {
     return this.funcionesService.formatNumber(cantidad);
  }
 
+ redondearPrecioCompra(precioCompra: number): number  {
+  const precio = parseFloat(precioCompra.toFixed(2));
+  return precio;
+}
+
  validarPositivos(campo: string, event: any): number {
   const cantidad: number = event.target.value as number;
   if (this.actualizando === false ) {
@@ -235,43 +269,59 @@ export class FormReportesComponent implements OnInit {
 }
 
 asignarDatosParaGuardarRerporte(): boolean {
-  const cantidadModificada = this.formularioReporte.value.cantidadReporte;
-  if ( cantidadModificada <= 0 ) {
+  this.cantidadModificada = this.formularioReporte.value.cantidadReporte;
+  if ( this.cantidadModificada <= 0 ) {
     Swal.fire({
       type: 'error',
       title: `Accion No Permitida!`,
-      text: `No puede generar un reporte de  "${cantidadModificada}" Productos`,
+      text: `No puede generar un reporte de  "${this.cantidadModificada}" Productos`,
       footer: 'Intente de Nuevo',
       });
     return false;
   }
-  const nuevaCantidadBodega = this.preCantidad - cantidadModificada;
+  const nuevaCantidadBodega = this.preCantidad - this.cantidadModificada;
   this.bodega.cantidad = nuevaCantidadBodega;
   this.reporte.nombre = this.formularioReporte.value.tipoReporte;
-  this.reporte.cantidad = cantidadModificada;
+  this.reporte.cantidad = this.cantidadModificada;
   this.reporte.precioCompra = this.bodega.precioCompra;
   this.reporte.descripcion = this.formularioReporte.value.descripcion;
   return true;
 }
 
 asignarDatosParaGuardarTraslado(): boolean {
-  const cantidadModificada = this.formularioTraslado.value.cantidadTraslado;
-  if ( cantidadModificada <= 0 ) {
+  this.cantidadModificada = this.formularioTraslado.value.cantidadTraslado;
+  if ( this.cantidadModificada <= 0 ) {
     Swal.fire({
       type: 'error',
       title: `Accion No Permitida!`,
-      text: `No puede generar un traslado de  "${cantidadModificada}" Productos`,
+      text: `No puede generar un traslado de  "${this.cantidadModificada}" Productos`,
       footer: 'Intente de Nuevo',
       });
     return false;
   }
-  const nuevaCantidadBodega = this.preCantidad - cantidadModificada;
+  const nuevaCantidadBodega = this.preCantidad - this.cantidadModificada;
   this.bodega.cantidad = nuevaCantidadBodega;
   this.reporte.nombre = 'Traslado';
-  this.reporte.cantidad = cantidadModificada;
+  this.reporte.cantidad = this.cantidadModificada;
   this.reporte.precioCompra = this.bodega.precioCompra;
+  this.sucursalTraslado = this.formularioTraslado.value.sucursal;
   this.reporte.descripcion = this.formularioTraslado.value.descripcionTraslado;
+  this.idCompuesto = (this.sucursalTraslado.id.toString() + this.productoBodega.id.toString());
+
   return true;
+}
+
+calcularPreciCompra(): number {
+   const inversionSaliente = this.bodega.precioCompra * this.cantidadModificada;
+   console.log('inversion saliente');
+   console.log(inversionSaliente);
+   const inversionAumenta = this.bodegaIncrementar.precioCompra * this.bodegaIncrementar.cantidad;
+   console.log('inversion aumenta');
+   console.log(inversionAumenta);
+   const nuevoPrecioCompra = (inversionSaliente + inversionAumenta) / (this.cantidadModificada + this.bodegaIncrementar.cantidad);
+   console.log('Nuevo precio compra');
+   console.log(nuevoPrecioCompra);
+   return this.redondearPrecioCompra(nuevoPrecioCompra);
 }
 
 }

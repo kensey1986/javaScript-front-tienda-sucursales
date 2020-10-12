@@ -1,10 +1,8 @@
+import { BodegaService } from './../service/bodega.service';
+import { Bodega } from './../models/bodega';
 import { Component, OnInit } from '@angular/core';
-import { Producto } from '../interfaces/producto';
-import { ProductoService } from '../services/producto.service';
 import { ActivatedRoute } from '@angular/router';
-import { ModalProductoService  } from '../services/modal-producto.service';
 import { AuthService } from '../../users/services/auth.service';
-import { ModalProductoBuscarService } from '../producto-buscar/modal-producto-buscar.service';
 import { FuncionesService } from '../../generales/services/funciones.service';
 import { LoadingService } from '../../generales/services/loading.service';
 import * as jsPDF from 'jspdf';
@@ -15,15 +13,14 @@ import {  FormControl, FormGroup, Validators } from '@angular/forms';
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-informes',
-  templateUrl: './informes.component.html'
+  selector: 'app-informe',
+  templateUrl: './bodegas-informe.component.html',
 })
-
-export class InformesComponent implements OnInit {
+export class BoodegasInformeComponent implements OnInit {
 
   errores: string[];
-  productos: Producto[];
-  tmp: Producto[];
+  bodegas: Bodega[];
+  tmp: Bodega[];
   titulo: string;
 
   estados: string[] = null;
@@ -37,9 +34,7 @@ export class InformesComponent implements OnInit {
   fechaFinFiltro: string;
 
   constructor(
-    public  productoService: ProductoService,
-    public modalProductoService: ModalProductoService,
-    public modalProductoBuscarService: ModalProductoBuscarService,
+    public  bodegaService: BodegaService,
     public  activatedRoute: ActivatedRoute,
     public funcionesService: FuncionesService,
     public authService: AuthService,
@@ -47,18 +42,19 @@ export class InformesComponent implements OnInit {
     ) { }
 
   ngOnInit() {
+    this.loadingService.abrirModal();
     this.titulo = this.funcionesService.setTitulo();
-    this.cagarListadoProductos();
+    this.cagarListadoBodegas();
   }
 
-  filtrarFacturas() {
+  filtrarBodegas() {
     if (this.fechaInicioFiltro !== undefined && this.fechaInicioFiltro != null) {
       if (this.fechaFinFiltro !== undefined && this.fechaFinFiltro != null) {
         if (this.fechaFinFiltro > this.fechaInicioFiltro) {
           this.loadingService.abrirModal();
-          this.productoService.getFiltrarProductosPorFecha(this.fechaInicioFiltro, this.fechaFinFiltro)
+          this.bodegaService.getBodegasPorFechaCreate(this.fechaInicioFiltro, this.fechaFinFiltro)
         .subscribe(
-          producto => {this.productos = producto; });
+          bodegas => {this.bodegas = bodegas; });
           this.loadingService.cerrarModal();
         } else {
           Swal.fire({
@@ -89,11 +85,10 @@ export class InformesComponent implements OnInit {
   // setTimeout( () => {
   //   this.loadingService.cerrarModal();
   // }, 3000);
-cagarListadoProductos() {
-    this.loadingService.abrirModal();
-    this.productoService.getListadoProductos()
+cagarListadoBodegas() {
+    this.bodegaService.getListadoBodegas()
     .subscribe(
-      producto => {this.productos = producto; this.tmp = this.productos;
+      bodega => {this.bodegas = bodega; this.tmp = bodega;
       },
       err => {
         this.errores = err.error.errors as string[];
@@ -103,10 +98,10 @@ cagarListadoProductos() {
   }
 
 filtrarCantidades( inicial: number, final: number) {
-    this.productos = this.tmp;
+    this.bodegas = this.tmp;
     if (inicial >= 0 && final >= 0) {
       if (inicial <= final ) {
-      this.productos = this.productos.filter(dato => dato.cantidad >= inicial && dato.cantidad <= final);
+      this.bodegas = this.bodegas.filter(dato => dato.cantidad >= inicial && dato.cantidad <= final);
       } else {
         Swal.fire({
           type: 'error',
@@ -152,5 +147,5 @@ imprimirInforme() {
     doc.autoPrint();
     doc.save(` ${date}-informe-Productos.pdf`);
   }
-}
 
+}

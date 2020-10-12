@@ -34,16 +34,7 @@
       >
         Buscar Producto
       </button>
-      <button
-        [disabled]="[activar]"
-        mat-raised-button
-        class="btn bg-light btn-rounded btn-outline-dark btn-xs mx-3"
-        *ngIf="authService.hasRole('ROLE_ADMIN')"
-        type="button"
-        [routerLink]="['/productos/informes']"
-      >
-        Informes
-      </button>
+      
     </mat-card-actions>
 
     <mat-form-field
