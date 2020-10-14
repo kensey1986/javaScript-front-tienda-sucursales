@@ -1,7 +1,7 @@
 import { formatDate } from '@angular/common';
 import { ReporteService } from './../services/reporte.service';
 import { Component, OnInit } from '@angular/core';
-import { Reporte } from '../interfaces/Reporte';
+import { Reporte } from '../interfaces/reporte';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../users/services/auth.service';
 import { FuncionesService } from '../../generales/services/funciones.service';
