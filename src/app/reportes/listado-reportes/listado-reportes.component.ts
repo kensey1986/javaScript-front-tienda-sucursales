@@ -1,6 +1,6 @@
 import { ReporteService } from './../services/reporte.service';
 import { Component, ViewChild, OnInit } from '@angular/core';
-import { Reporte } from '../interfaces/Reporte';
+import { Reporte } from '../interfaces/reporte';
 import { tap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../users/services/auth.service';
