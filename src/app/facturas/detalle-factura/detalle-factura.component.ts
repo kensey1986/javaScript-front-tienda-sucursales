@@ -1,3 +1,4 @@
+import { ItemFactura } from './../interfaces/item-factura';
 import { Component, OnInit } from '@angular/core';
 import { Factura } from '../interfaces/factura';
 import { ActivatedRoute } from '@angular/router';
@@ -119,13 +120,13 @@ export class DetalleFacturaComponent implements OnInit {
     for (const i of factura.items) {
       conta += 33;
     }
-    if (factura.descuento != null && factura.descuento > 0) {
-      doc.text(
-        'Descuento: ' + this.formatNumber(factura.descuento),
-        295 + x,
-        conta + y
-      );
-    }
+    // if (factura.descuento != null && factura.descuento > 0) {
+    //   doc.text(
+    //     'Descuento: ' + this.formatNumber(factura.descuento),
+    //     295 + x,
+    //     conta + y
+    //   );
+    // }
     doc.setFontSize(12);
     doc.text('Total: ' + this.formatNumber(factura.totalFactura), 395 + x, conta + y);
     conta += 10;
@@ -166,6 +167,18 @@ export class DetalleFacturaComponent implements OnInit {
     doc.save(`${factura.numeroFactura}-factura.pdf`);
   }
 
+  calcularImporteVendido(item: ItemFactura): string {
+    const descuento = item.desPorcentaje;
+    const cantidad = item.cantidad;
+    const precio = item.precioVendido;
+    let importe = 0;
+    if (descuento > 0 && descuento < 100) {
+        importe  = (precio * cantidad) * (descuento / 100);
+    } else {
+      importe  = (precio * cantidad);
+    }
+    return this.funcionesService.formatNumber(importe);
+  }
   formatNumber(cantidad: number): string {
     return this.funcionesService.formatNumber(cantidad);
   }

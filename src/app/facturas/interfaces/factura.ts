@@ -13,7 +13,6 @@ export class Factura {
   cliente: Cliente;
   sucursal: Sucursal;
   usuario: User;
-  descuento = 0;
   total: number;
   totalFactura: number;
   totalGanancia: number;
@@ -28,9 +27,6 @@ export class Factura {
     this.items.forEach((item: ItemFactura) => {
       this.total +=  item.calcularImporte();
     });
-    if (this.descuento > 0) {
-      this.total -= this.descuento;
-    }
     return this.total;
   }
 
@@ -40,10 +36,8 @@ export class Factura {
     this.items.forEach((item: ItemFactura) => {
       this.totalGanancia +=  item.calcularGanancia();
     });
-    if (this.descuento > 0) {
-      this.totalGanancia -= this.descuento;
-    }
     return this.totalGanancia;
   }
+
 
 }

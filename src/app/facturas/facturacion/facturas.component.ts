@@ -221,8 +221,13 @@ export class FacturasComponent implements OnInit {
         item.precioComprado = item.producto.precioCompra;
         item.precioVendido = item.producto.precio;
         item.importe = item.producto.precio * item.cantidad;
+        if (item.desPorcentaje === null ) {
+          item.desPorcentaje = 0;
+        }
       } );
       this.cargarSucursal(JSON.parse(sessionStorage.getItem('sucursal')).id);
+      console.log(this.factura.sucursal.bodegas);
+      console.log(this.factura);
       this.facturaService.create(this.factura).subscribe(factura => {
         this.factura.items.forEach((item: ItemFactura) => {
           item.producto.cantidad = item.producto.cantidad - item.cantidad;
@@ -236,12 +241,17 @@ export class FacturasComponent implements OnInit {
           console.log(bodegaActualizar);
           bodegaActualizar.sucursal = null;
           bodegaActualizar.cantidad = item.producto.cantidad;
+          item.producto.bodegas = null;
+          this.factura.sucursal.bodegas = null;
+          this.factura.sucursal.facturas = null;
           this.bodegaService.update(bodegaActualizar)
           .subscribe(
             () => {
-              console.log('numero factura :  ' + this.sucursal.numeroFactura);
+              console.log('numero factura :  ');
+              console.log(this.sucursal.numeroFactura);
               this.sucursal.numeroFactura = this.factura.numeroFactura;
-              console.log('enviara sucursal :  ' + this.sucursal);
+              console.log('enviara sucursal :  ');
+              console.log(this.sucursal);
               this.sucursalService.update(this.sucursal)
               .subscribe(
                 () => {
@@ -270,19 +280,28 @@ export class FacturasComponent implements OnInit {
     }
   }
 
-  validarDescuento(dato: Factura): string {
-    if (dato !== null) {
-      if (dato.descuento <= dato.calcularGananciaTotal()) {
-        return this.formatNumber(dato.descuento);
-      } else {
-        dato.descuento = 0;
+  validarDescuento(dato: Factura) {
+    const validar = dato.items[dato.items.length - 1].desPorcentaje;
+    if (validar === null ) {
+      dato.items[dato.items.length - 1].desPorcentaje = 0;
+    }
+    if (validar > 100) {
+      Swal.fire({
+        type: 'error',
+        title: 'Oops',
+        text: 'El valor de descuento no puede superar el 100%',
+        footer: 'Intente de nuevo',
+        });
+      dato.items[dato.items.length - 1].desPorcentaje = 0;
+    } else {
+      if (validar < 0) {
         Swal.fire({
           type: 'error',
-          title: 'Ooops',
-          text: `Esta aplicando un descuento que supera la ganancia`,
+          title: 'Oops',
+          text: 'El valor de descuento no puede ser negativo',
           footer: 'Intente de nuevo',
           });
-        return '0';
+        dato.items[dato.items.length - 1].desPorcentaje = 0;
       }
     }
   }

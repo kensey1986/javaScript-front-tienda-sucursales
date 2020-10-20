@@ -160,6 +160,7 @@
                 <th>Precio</th>
                 <th>Stock</th>
                 <th style="max-width: 50px">Cantidad</th>
+                <th>Descuento  '%'</th>
                 <th>Sub-Total</th>
                 <th>Eliminar</th>
               </tr>
@@ -179,6 +180,7 @@
                 >
                   {{ item.producto.cantidad }}
                 </td>
+               
                 <td
                   style="max-width: 80px; margin-top: 8px"
                   class="badge badge-danger"
@@ -195,6 +197,16 @@
                     class="form-control"
                     (change)="actualizarCantidad(item.producto.id, $event)"
                   />
+                </td>
+                <td class="text-center">
+                  <input
+                  type="number"
+                  style="max-width: 60px; margin-left: 10px; padding: 0"
+                  [(ngModel)]="item.desPorcentaje"
+                  [ngModelOptions]="{ standalone: true }"
+                  class="form-control"
+                  (change)="validarDescuento(factura)"
+                />
                 </td>
                 <td class="text-right">
                   {{ formatNumber(item.calcularImporte()) }}
@@ -215,7 +227,7 @@
       </mat-card>
       <mat-card style="margin-top: 20px">
         <mat-card-content>
-          <h5 class="float-left mx-2" *ngIf="factura.items.length > 0">
+          <!-- <h5 class="float-left mx-2" *ngIf="factura.items.length > 0">
             <strong>Descuento</strong>:
             <input
              (change)="validarDescuento(factura)"
@@ -226,13 +238,13 @@
               pattern="^[0-9]+"
               [ngModelOptions]="{ standalone: true }"
             />
-          </h5>
-          <h5 *ngIf="factura.descuento" class="float-right">
+          </h5> -->
+          <!-- <h5 *ngIf="factura.descuento" class="float-right">
             <strong>Descuento</strong>:
             <span class="badge badge-danger">
               {{ factura.descuento }}
             </span>
-          </h5>
+          </h5> -->
 
           <h5 class="float-right" *ngIf="factura.items.length > 0">
             <strong>Total</strong>:

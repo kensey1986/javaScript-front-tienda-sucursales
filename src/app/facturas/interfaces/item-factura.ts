@@ -11,7 +11,13 @@ export class ItemFactura {
   desDinero: number;
 
   public calcularImporte() {
-    return this.cantidad * this.producto.precio;
+    const importe = this.cantidad * this.producto.precio;
+    if (this.desPorcentaje !== null && this.desPorcentaje > 0) {
+      const porcentaje = (importe * (this.desPorcentaje / 100)) ;
+      return importe - porcentaje;
+    } else {
+      return importe;
+    }
   }
 
   public calcularGanancia() {

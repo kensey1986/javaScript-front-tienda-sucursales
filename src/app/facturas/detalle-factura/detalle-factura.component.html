@@ -64,7 +64,8 @@
           <th style="max-width: 35px">Codigo</th>
           <th class="text-center">Producto</th>
           <th>Precio</th>
-          <th style="max-width: 40px">Cantidad</th>
+          <th style="max-width: 30px">Cant</th>
+          <th style="max-width: 40px">Desc</th>
           <th>Sub-Total</th>
         </tr>
       </thead>
@@ -75,18 +76,12 @@
           </td>
           <td>{{ item.producto.nombre | uppercase }}</td>
           <td>{{ formatNumber(item.precioVendido) }}</td>
-          <td style="max-width: 40px">{{ item.cantidad }}</td>
-          <td>{{ formatNumber(item.importe) }}</td>
+          <td style="max-width: 30px">{{ item.cantidad }}</td>
+          <td style="max-width: 40px">{{ item.desPorcentaje }}</td>
+          <td>{{ calcularImporteVendido(item) }}</td>
         </tr>
       </tbody>
     </table>
-    <h5 *ngIf="factura.descuento" class="float-right">
-      <strong>Descuento</strong>:
-      <span class="badge badge-danger m-2 p-2">
-        {{ formatNumber(factura.descuento) }}
-      </span>
-    </h5>
-
     <h5 class="float-right">
       <strong>Total</strong>:
       <span class="badge badge-warning m-2 p-2">
