@@ -40,7 +40,7 @@ export class AuthService {
   }
 
   login(usuario: User): Observable<any> {
-    const urlEndpoint = `${this.funcionesService.setUrlBase()}oauth/token`;
+    const urlEndpoint = `${this.funcionesService.setUrlBase()}auth/signin`;
 
     const credenciales = btoa('angularapp' + ':' + '12345');
     const httpHeaders = new HttpHeaders({

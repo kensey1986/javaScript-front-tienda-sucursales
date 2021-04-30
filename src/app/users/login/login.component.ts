@@ -20,11 +20,11 @@ export class LoginComponent implements OnInit {
   usuario: User;
   public  urlEndPoint: string;
   public  rol = 'USUARIO';
-  sucursales: Sucursal[];
+  //sucursales: Sucursal[];
   titulo = 'Bienvenido';
   opcionSeleccionado  = '';
   hide = true;
-  tmpSucursal: Sucursal;
+  //tmpSucursal: Sucursal;
 
   constructor(
     public authService: AuthService,
@@ -36,8 +36,8 @@ export class LoginComponent implements OnInit {
     public userService: UserService
   ) {
     this.usuario = new User();
-    this.sucursalService.getSucursalLista()
-    .subscribe(sucursales => (this.sucursales = sucursales));
+    // this.sucursalService.getSucursalLista()
+    // .subscribe(sucursales => (this.sucursales = sucursales));
     this.urlEndPoint = `${this.funcionesService.setUrlBase()}`;
   }
 
@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
   login(): void {
     this.usuario.username = this.formularioCreado.value.usuario,
     this.usuario.password = this.formularioCreado.value.password,
-    this.tmpSucursal = this.formularioCreado.value.sucursal;
+    //this.tmpSucursal = this.formularioCreado.value.sucursal;
     console.log();
     if (this.usuario.username === null || this.usuario.password === null
       || this.usuario.username === undefined || this.usuario.password === undefined ) {
@@ -70,16 +70,17 @@ export class LoginComponent implements OnInit {
           footer: 'Intente de nuevo',
           });
         return;
-    } else if ( this.tmpSucursal === null  || this.tmpSucursal === undefined ) {
-      Swal.fire({
-        type: 'error',
-        title: 'Error al Ingresar',
-        text: 'Debe Selecionar Sucursal',
-        footer: 'Intente de nuevo',
-        });
-      return;
-    }
-    sessionStorage.setItem('sucursal', JSON.stringify(this.tmpSucursal));
+    // } else if ( this.tmpSucursal === null  || this.tmpSucursal === undefined ) {
+    //   Swal.fire({
+    //     type: 'error',
+    //     title: 'Error al Ingresar',
+    //     text: 'Debe Selecionar Sucursal',
+    //     footer: 'Intente de nuevo',
+    //     });
+    //   return;
+    // 
+  }
+    //sessionStorage.setItem('sucursal', JSON.stringify(this.tmpSucursal));
     this.loadingService.abrirModal();
     this.authService.login(this.usuario).subscribe(response => {
       // console.log(response);
@@ -139,9 +140,9 @@ export class LoginComponent implements OnInit {
         Validators.minLength(3),
         Validators.maxLength(20)
       ])],
-      sucursal: [null, Validators.compose([
-        Validators.required,
-      ])],
+      // sucursal: [null, Validators.compose([
+      //   Validators.required,
+      // ])],
     });
   }
 
